@@ -1,5 +1,4 @@
 "use client";
-
 import UserSyncWrapper from '@/components/UserSyncWrapper';
 import { Chat } from "stream-chat-react";
 import streamClient from '@/lib/stream';
@@ -21,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   // Pages that should NOT show sidebar
   const noSidebarRoutes = [
     "/chats",
-    "/dashboard/chats",
+    "/user-dashboard/chats",
   ];
 
   const hideSidebar = noSidebarRoutes.some(route =>
@@ -44,7 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <header className="flex h-16 shrink-0 items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-                <Link href="/dashboard">
+                <Link href="/user-dashboard">
                   <h1 className="text-lg font-bold tracking-wider uppercase">
                     Liza
                   </h1>

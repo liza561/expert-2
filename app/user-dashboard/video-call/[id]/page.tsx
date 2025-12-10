@@ -17,7 +17,7 @@ function VideoCall() {
   const { setOpen } = useSidebar();
 
   const handleLeave = () => {
-    router.push("/dashboard");
+    router.push("/user-dashboard");
     setOpen(true);
   };
 

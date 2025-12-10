@@ -26,8 +26,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     type:{$in:["messaging","team"]},
   }
   const openChats = () => {
-    router.push(`/chats`);
-  };
+  if (!user) return;
+  const role = user.publicMetadata.role;
+
+  if (role === "admin") {
+    router.push("/admin-dashboard/chats");
+  } else {
+    router.push("/user-dashboard/chats");
+  }
+};
 
   const options = { pressence:true ,state:true};
   const sort: ChannelSort ={

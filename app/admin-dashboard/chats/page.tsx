@@ -25,21 +25,21 @@ export default function ChatsPage() {
   if (!users) return <p className="p-6">Loading...</p>;
 
   const openChat = (userId: string) => {
-    router.push(`/dashboard?chatUser=${userId}`);
+    router.push(`/admin-dashboard?chatUser=${userId}`);
   };
 
   const startCall = (userId: string) => {
-    router.push(`/dashboard/video-call/${userId}`);
+    router.push(`/admin-dashboard/video-call/${userId}`);
   };
 
   return (
     <div className="p-6 space-y-6">
     <Button
       variant="outline"
-      onClick={() => router.push("/dashboard")}
+      onClick={() => router.push("/admin-dashboard")}
       className="mb-2"
     >
-      ← Back to Dashboard
+      ← Back to Admin Dashboard
     </Button>
       <h1 className="text-2xl font-semibold">All Users</h1>
 

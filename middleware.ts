@@ -1,35 +1,21 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
-const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isAdminRoute = createRouteMatcher(['/admin(.*)'])
 
 export default clerkMiddleware(async (auth, req) => {
-   const { sessionClaims } = await auth();   
-   const { protect } = auth;              
-
-  // Protect dashboard routes (all signed-in users)
-  if (isDashboardRoute(req)) {
-    await protect();
+  // Protect all routes starting with `/admin`
+  if (isAdminRoute(req) && (await auth()).sessionClaims?.metadata?.role !== 'admin') {
+    const url = new URL('/', req.url)
+    return NextResponse.redirect(url)
   }
-
-  // Protect admin routes (admin only)
-  if (isAdminRoute(req)) {
-    await protect();
-
-    const role = sessionClaims?.user?.publicMetadata?.role;
-
-    if (role !== "admin") {
-      return Response.redirect(new URL("/dashboard", req.url));
-    }
-  }
-});
+})
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static files
+    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-
     // Always run for API routes
-    "/(api|trpc)(.*)",
+    '/(api|trpc)(.*)',
   ],
-};
+}

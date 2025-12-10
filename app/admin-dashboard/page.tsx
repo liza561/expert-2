@@ -16,21 +16,35 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { VideoIcon, LogOutIcon } from "lucide-react";
 import ChatDocuments from "@/components/ChatDocuments";
+import UserDashboard from "@/app/user-dashboard/page";
 
-function Dashboard() {
-  const { user } = useUser();
+
+function AdminDashboard() {
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const { channel, setActiveChannel, client } = useChatContext();
   const { setOpen } = useSidebar();
   const searchParams = useSearchParams();
-  const chatUserId = searchParams?.get("chatUser");
 
+  const chatUserId = searchParams?.get("chatUser");
   const [showDocuments, setShowDocuments] = useState(false);
 
-  // OPEN DOCUMENTS
+  //  Wait for Clerk user to load
+  if (!isLoaded) {
+    return <div className="p-6 text-center">Loading...</div>;
+  }
+
+  //  Get role safely
+  const role = user?.publicMetadata?.role;
+
+  //  If Admin → Show Admin Panel, hide user chat UI
+  if (role !== "admin") {
+    return <UserDashboard/>;
+  }
+
+  // Continue user dashboard
   const openDocuments = () => setShowDocuments(true);
 
-  // Open existing chat or create a new 1-on-1 chat
   const openOrCreateChatWithUser = async (otherUserId: string) => {
     if (!client || !user?.id) return;
 
@@ -69,22 +83,19 @@ function Dashboard() {
 
   const handleCall = () => {
     if (!channel) return;
-    router.push(`/dashboard/video-call/${channel.id}`);
+    router.push(`/admin-dashboard/video-call/${channel.id}`);
     setOpen(false);
   };
 
   const handleLeaveChat = async () => {
     if (!channel || !user?.id) return;
 
-    const confirmLeave = window.confirm(
-      "Are you sure you want to leave the chat?"
-    );
-    if (!confirmLeave) return;
+    if (!window.confirm("Are you sure you want to leave the chat?")) return;
 
     try {
       await channel.removeMembers([user.id]);
       setActiveChannel(undefined);
-      router.push("/dashboard");
+      router.push("/admin-dashboard");
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
@@ -143,7 +154,6 @@ function Dashboard() {
         </div>
       )}
 
-      {/* ⬇️ DOCUMENTS VIEWER MODAL */}
       {showDocuments && (
         <ChatDocuments onClose={() => setShowDocuments(false)} />
       )}
@@ -151,4 +161,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;
