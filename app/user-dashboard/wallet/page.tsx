@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/dist/client/components/navigation";
 
 export default function WalletPage() {
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState("");
-
+  const router = useRouter();
   // Load balance on page load
   useEffect(() => {
     fetch("/api/wallet")
@@ -33,6 +34,13 @@ export default function WalletPage() {
 
   return (
     <div className="p-6 space-y-6 max-w-lg">
+    <Button
+      variant="outline"
+      onClick={() => router.push("/user-dashboard")}
+      className="mb-2"
+    >
+      ← Back to User Dashboard
+    </Button>
       <h1 className="text-2xl font-semibold">Wallet</h1>
 
       <Card>

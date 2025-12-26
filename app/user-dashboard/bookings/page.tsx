@@ -34,6 +34,13 @@ export default function BookingsPage() {
 
   return (
     <div className="p-6 space-y-6">
+    <Button
+      variant="outline"
+      onClick={() => router.push("/user-dashboard")}
+      className="mb-2"
+    >
+      ← Back to User Dashboard
+    </Button>
       <h1 className="text-2xl font-semibold">Your Bookings</h1>
 
       <Tabs defaultValue="upcoming">

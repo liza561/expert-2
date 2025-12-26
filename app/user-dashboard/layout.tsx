@@ -21,6 +21,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const noSidebarRoutes = [
     "/chats",
     "/user-dashboard/chats",
+    "/user-dashboard/bookings",
+    "/user-dashboard/documents",
+    "/user-dashboard/wallet",
   ];
 
   const hideSidebar = noSidebarRoutes.some(route =>

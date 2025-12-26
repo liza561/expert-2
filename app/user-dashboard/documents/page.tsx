@@ -1,8 +1,8 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useChatContext } from "stream-chat-react";
 import { useEffect, useState } from "react";
-
+import { Button } from "@/components/ui/button";
 type DocItem = {
   id: string;
   type: "image" | "file";
@@ -15,7 +15,7 @@ export default function YourDocumentsPage() {
   const { client } = useChatContext();
   const [docs, setDocs] = useState<DocItem[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
     if (!client) return;
 
@@ -70,6 +70,13 @@ export default function YourDocumentsPage() {
 
   return (
     <div className="p-6">
+    <Button
+      variant="outline"
+      onClick={() => router.push("/user-dashboard")}
+      className="mb-2"
+    >
+      ← Back to User Dashboard
+    </Button>
       <h1 className="text-2xl font-semibold mb-4">Your Documents</h1>
 
       {loading && <p>Loading…</p>}
