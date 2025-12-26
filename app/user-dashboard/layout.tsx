@@ -2,7 +2,7 @@
 import UserSyncWrapper from '@/components/UserSyncWrapper';
 import { Chat } from "stream-chat-react";
 import streamClient from '@/lib/stream';
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/sidebar/AppSidebar"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
