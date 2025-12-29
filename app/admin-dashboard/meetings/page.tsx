@@ -89,9 +89,10 @@ export default function AdminMeetingsPage() {
 
           <div className="flex gap-2">
             {!isPastMeeting(m.date, m.time) && (
-              <Button onClick={() => startCall(m.userId)}>
-                <VideoIcon className="w-4 h-4 mr-2" />
-                Join Meeting
+              <Button onClick={() => startCall(m.userId)}
+                variant="outline"
+                className="px-4 py-2">
+                Approve
               </Button>
             )}
 
