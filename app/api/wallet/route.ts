@@ -3,18 +3,18 @@ import { auth } from "@clerk/nextjs/server";
 import fs from "fs";
 import path from "path";
 
-const filePath = path.resolve("wallets.json");
+const filePath = path.resolve("wallet.json");
 
-type Wallets = Record<string, number>;
+type Wallet = Record<string, number>;
 
 /* -------- Helpers -------- */
-function loadWallets(): Wallets {
+function loadWallet(): Wallet {
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
 
-function saveWallets(wallets: Wallets) {
-  fs.writeFileSync(filePath, JSON.stringify(wallets, null, 2));
+function saveWallet(wallet: Wallet) {
+  fs.writeFileSync(filePath, JSON.stringify(wallet, null, 2));
 }
 
 /* -------- GET: Fetch user balance -------- */
@@ -25,8 +25,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const wallets = loadWallets();
-  const balance = wallets[userId] ?? 0;
+  const wallet = loadWallet();
+  const balance = wallet[userId] ?? 0;
 
   return NextResponse.json({ balance });
 }
@@ -45,10 +45,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
-  const wallets = loadWallets();
-  wallets[userId] = (wallets[userId] ?? 0) + Number(amount);
+  const wallet = loadWallet();
+  wallet[userId] = (wallet[userId] ?? 0) + Number(amount);
 
-  saveWallets(wallets);
+  saveWallet(wallet);
 
-  return NextResponse.json({ balance: wallets[userId] });
+  return NextResponse.json({ balance: wallet[userId] });
 }

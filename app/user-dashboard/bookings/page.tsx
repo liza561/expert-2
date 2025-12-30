@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { MessageCircle, VideoIcon } from "lucide-react";
 
+/* ---------------- types ---------------- */
+
 type Booking = {
   id: string;
   adminId: string;
@@ -24,6 +26,33 @@ type Admin = {
   username: string;
 };
 
+/* ---------------- Star Rating ---------------- */
+
+function StarRating({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          onClick={() => onChange(star)}
+          className={`text-2xl ${
+            star <= value ? "text-yellow-400" : "text-gray-300"
+          }`}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ---------------- Page ---------------- */
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -32,7 +61,8 @@ export default function BookingsPage() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [loadingAdmins, setLoadingAdmins] = useState(true);
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
+  const [activeTab, setActiveTab] =
+    useState<"upcoming" | "past" | "rating">("upcoming");
 
   const router = useRouter();
 
@@ -50,12 +80,12 @@ export default function BookingsPage() {
   };
 
   const startCall = (adminId: string) => {
-  router.push(`/user-dashboard/video-call/${adminId}`);
-};
+    router.push(`/user-dashboard/video-call/${adminId}`);
+  };
 
   const openChat = (adminId: string) => {
-  router.push(`/user-dashboard?chatAdmin=${adminId}`);
-};
+    router.push(`/user-dashboard?chatAdmin=${adminId}`);
+  };
 
   /* ---------------- fetch data ---------------- */
 
@@ -155,83 +185,130 @@ export default function BookingsPage() {
             ))}
           </select>
 
-          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-          <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+          <Input
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
 
           <Button onClick={bookMeeting}>Book Meeting</Button>
         </CardContent>
       </Card>
 
       {/* --------- Tabs --------- */}
-      <div className="flex gap-4 border-b">
-        {["upcoming", "past"].map((tab) => (
+      <div className="flex gap-6 border-b">
+        {["upcoming", "past", "rating"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as any)}
-            className={`pb-2 ${
+            className={`pb-2 capitalize ${
               activeTab === tab
                 ? "border-b-2 border-blue-500 font-semibold"
                 : "text-muted-foreground"
             }`}
           >
-            {tab[0].toUpperCase() + tab.slice(1)}
+            {tab === "rating" ? "Expert Rating" : tab}
           </button>
         ))}
       </div>
 
-      {/* --------- Sessions --------- */}
-      <div className="space-y-4">
-        {activeTab === "upcoming" &&
-          (upcoming.length === 0 ? (
-            <p>No upcoming sessions.</p>
-          ) : (
-            upcoming.map((b) => (
-              <Card key={b.id}>
-                <CardContent className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{b.adminName}</p>
-                    <p>{b.date}</p>
-                    <p className="text-muted-foreground">
-                      {formatTime(b.time)}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button onClick={() => startCall(b.adminId)}>
-                      <VideoIcon className="w-4 h-4 mr-1" />
-                      Join Call
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      onClick={() => openChat(b.adminId)}
-                    >
-                      <MessageCircle className="w-4 h-4 mr-1" />
-                      Chat
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ))}
-
-        {activeTab === "past" &&
-          (past.length === 0 ? (
-            <p>No past sessions.</p>
-          ) : (
-            past.map((b) => (
-              <Card key={b.id}>
-                <CardContent>
+      {/* --------- Upcoming --------- */}
+      {activeTab === "upcoming" &&
+        (upcoming.length === 0 ? (
+          <p>No upcoming sessions.</p>
+        ) : (
+          upcoming.map((b) => (
+            <Card key={b.id}>
+              <CardContent className="flex justify-between items-center">
+                <div>
                   <p className="font-medium">{b.adminName}</p>
                   <p>{b.date}</p>
                   <p className="text-muted-foreground">
                     {formatTime(b.time)}
                   </p>
-                </CardContent>
-              </Card>
-            ))
-          ))}
-      </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => openChat(b.adminId)}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-1" />
+                    Chat
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ))}
+
+      {/* --------- Past --------- */}
+      {activeTab === "past" &&
+        (past.length === 0 ? (
+          <p>No past sessions.</p>
+        ) : (
+          past.map((b) => (
+            <Card key={b.id}>
+              <CardContent>
+                <p className="font-medium">{b.adminName}</p>
+                <p>{b.date}</p>
+                <p className="text-muted-foreground">
+                  {formatTime(b.time)}
+                </p>
+              </CardContent>
+            </Card>
+          ))
+        ))}
+
+      {/* --------- Rating --------- */}
+      {activeTab === "rating" &&
+        (past.length === 0 ? (
+          <p>No completed sessions to rate.</p>
+        ) : (
+          past.map((b) => (
+            <Card key={b.id}>
+              <CardContent className="space-y-3">
+                <div>
+                  <p className="font-medium">{b.adminName}</p>
+                  <p className="text-muted-foreground">
+                    {b.date} · {formatTime(b.time)}
+                  </p>
+                </div>
+
+                <StarRating
+                  value={b.rating ?? 0}
+                  onChange={async (rating) => {
+                    setBookings((prev) =>
+                      prev.map((bk) =>
+                        bk.id === b.id ? { ...bk, rating } : bk
+                      )
+                    );
+
+                    await fetch("/api/bookings/rate", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        bookingId: b.id,
+                        rating,
+                      }),
+                    });
+                  }}
+                />
+
+                {b.rating && (
+                  <p className="text-sm text-green-600">
+                    Rated {b.rating} / 5
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          ))
+        ))}
     </div>
   );
 }

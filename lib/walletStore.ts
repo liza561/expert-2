@@ -1,1 +1,1 @@
-export const wallets = new Map<string, number>();
+export const wallet = new Map<string, number>();

@@ -25,7 +25,8 @@
     "time": "04:00",
     "status": "upcoming",
     "channelCid": "cid_1766833680752",
-    "videoCallUrl": "/call/cid_1766833680752"
+    "videoCallUrl": "/call/cid_1766833680752",
+    "rating": 5
   },
   {
     "id": "1766833766576",
@@ -37,7 +38,8 @@
     "time": "05:40",
     "status": "upcoming",
     "channelCid": "cid_1766833766576",
-    "videoCallUrl": "/call/cid_1766833766576"
+    "videoCallUrl": "/call/cid_1766833766576",
+    "rating": 3
   },
   {
     "id": "1766834038318",
@@ -49,7 +51,8 @@
     "time": "17:43",
     "status": "upcoming",
     "channelCid": "cid_1766834038318",
-    "videoCallUrl": "/call/cid_1766834038318"
+    "videoCallUrl": "/call/cid_1766834038318",
+    "rating": 3
   },
   {
     "id": "1766834088638",
@@ -60,7 +63,8 @@
     "time": "17:00",
     "status": "upcoming",
     "channelCid": "cid_1766834088638",
-    "videoCallUrl": "/call/cid_1766834088638"
+    "videoCallUrl": "/call/cid_1766834088638",
+    "rating": 5
   },
   {
     "id": "1766834241218",
@@ -227,7 +231,8 @@
     "time": "15:30",
     "status": "upcoming",
     "channelCid": "cid_1767084964000",
-    "videoCallUrl": "/call/cid_1767084964000"
+    "videoCallUrl": "/call/cid_1767084964000",
+    "rating": 4
   },
   {
     "id": "1767084994309",
@@ -239,7 +244,8 @@
     "time": "14:20",
     "status": "upcoming",
     "channelCid": "cid_1767084994309",
-    "videoCallUrl": "/call/cid_1767084994309"
+    "videoCallUrl": "/call/cid_1767084994309",
+    "rating": 5
   },
   {
     "id": "1767096996981",
@@ -264,5 +270,41 @@
     "status": "upcoming",
     "channelCid": "cid_1767097142792",
     "videoCallUrl": "/call/cid_1767097142792"
+  },
+  {
+    "id": "1767102167587",
+    "userId": "user_36YXQiIMhdPQQZxnVX8iBNGkgqm",
+    "userName": "Liza",
+    "adminId": "user_36bnu0iD5sLNti741ZydgbUvZF0",
+    "adminName": "Admin Katuri (lizakaturi@gmail.com)",
+    "date": "2025-12-30",
+    "time": "21:00",
+    "status": "upcoming",
+    "channelCid": "cid_1767102167587",
+    "videoCallUrl": "/call/cid_1767102167587"
+  },
+  {
+    "id": "1767105313623",
+    "userId": "user_36Yf0eKnLOK0gjGhBXi72s2MVVh",
+    "userName": "liza joy",
+    "adminId": "user_36bnu0iD5sLNti741ZydgbUvZF0",
+    "adminName": "Admin Katuri (lizakaturi@gmail.com)",
+    "date": "2025-12-31",
+    "time": "21:00",
+    "status": "upcoming",
+    "channelCid": "cid_1767105313623",
+    "videoCallUrl": "/call/cid_1767105313623"
+  },
+  {
+    "id": "1767105636557",
+    "userId": "user_36YXQiIMhdPQQZxnVX8iBNGkgqm",
+    "userName": "Liza",
+    "adminId": "user_36bnu0iD5sLNti741ZydgbUvZF0",
+    "adminName": "Admin Katuri (lizakaturi@gmail.com)",
+    "date": "2025-12-30",
+    "time": "21:58",
+    "status": "upcoming",
+    "channelCid": "cid_1767105636557",
+    "videoCallUrl": "/call/cid_1767105636557"
   }
 ]

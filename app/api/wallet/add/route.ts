@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const wallets = new Map<string, number>();
+const wallet = new Map<string, number>();
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -13,10 +13,10 @@ export async function POST(req: Request) {
     return new NextResponse("Invalid amount", { status: 400 });
   }
 
-  const current = wallets.get(userId) ?? 0;
+  const current = wallet.get(userId) ?? 0;
   const newBalance = current + amount;
 
-  wallets.set(userId, newBalance);
+  wallet.set(userId, newBalance);
 
   return NextResponse.json({ balance: newBalance });
 }
