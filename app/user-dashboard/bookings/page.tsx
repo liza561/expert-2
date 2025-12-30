@@ -24,6 +24,7 @@ type Admin = {
   username: string;
 };
 
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [admins, setAdmins] = useState<Admin[]>([]);

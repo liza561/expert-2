@@ -12,8 +12,8 @@ type Meeting = {
   adminId: string;
   userName: string;
   adminName: string;
-  date: string; // YYYY-MM-DD
-  time: string; // HH:mm (24h)
+  date: string; 
+  time: string; 
 };
 
 export default function AdminMeetingsPage() {

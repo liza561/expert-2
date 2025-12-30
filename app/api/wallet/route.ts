@@ -1,37 +1,53 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import fs from "fs";
 import path from "path";
 
-// Path to a JSON file to store wallet balances
 const filePath = path.resolve("wallets.json");
 
-// Load wallets
-function loadWallets(): Record<string, number> {
+type Wallets = Record<string, number>;
+
+/* -------- Helpers -------- */
+function loadWallets(): Wallets {
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
 
-// Save wallets
-function saveWallets(wallets: Record<string, number>) {
+function saveWallets(wallets: Wallets) {
   fs.writeFileSync(filePath, JSON.stringify(wallets, null, 2));
 }
 
-// GET: fetch current balance
-export async function GET(req: Request) {
-  const userId = "default-user"; // Replace with actual userId from auth if using Clerk
+/* -------- GET: Fetch user balance -------- */
+export async function GET() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const wallets = loadWallets();
   const balance = wallets[userId] ?? 0;
+
   return NextResponse.json({ balance });
 }
 
-// POST: add money
+/* -------- POST: Add money -------- */
 export async function POST(req: Request) {
-  const userId = "default-user"; // Replace with actual userId from auth if using Clerk
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { amount } = await req.json();
-  if (!amount || Number(amount) <= 0) return NextResponse.json({ error: "Invalid amount" });
+
+  if (!amount || Number(amount) <= 0) {
+    return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+  }
 
   const wallets = loadWallets();
   wallets[userId] = (wallets[userId] ?? 0) + Number(amount);
+
   saveWallets(wallets);
 
   return NextResponse.json({ balance: wallets[userId] });
