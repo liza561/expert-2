@@ -6,21 +6,23 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function AdminEarningsPage() {
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/admin/earnings")
+    fetch("/api/admin/earnings", {
+      cache: "no-store", // 🔥 CRITICAL FIX
+    })
       .then((res) => res.json())
-      .then((data) => setTotal(data.total ?? 0));
+      .then((data) => {
+        console.log("EARNINGS UI:", data);
+        setTotal(data.total ?? 0);
+      });
   }, []);
 
   return (
-    <div className="p-6 space-y-6 max-w-lg">      
-      <Button
-        variant="outline"
-        onClick={() => router.push("/admin-dashboard")}
-      >
+    <div className="p-6 space-y-6 max-w-lg">
+      <Button variant="outline" onClick={() => router.push("/admin-dashboard")}>
         ← Back to Dashboard
       </Button>
 
@@ -32,7 +34,7 @@ export default function AdminEarningsPage() {
         </CardHeader>
         <CardContent>
           <p className="text-4xl font-bold text-green-600">
-            ₹ {total}
+            ₹ {total === null ? "Loading..." : total}
           </p>
         </CardContent>
       </Card>

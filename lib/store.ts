@@ -1,4 +1,12 @@
-// simple in-memory stores
-export const wallet = new Map<string, number>(); // userId => balance
-export const adminEarnings = new Map<string, number>(); // adminId => earnings
-export const bookings: any[] = []; // all bookings
+export type Wallet = {
+  userId: string;
+  balance: number;
+};
+
+export type AdminEarning = {
+  adminId: string;
+  total: number;
+};
+
+export const wallets: Wallet[] = [];
+export const adminEarnings: AdminEarning[] = [];
