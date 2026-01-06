@@ -43,7 +43,7 @@ useEffect(() => {
   if (callingState !== CallingState.JOINED || !call || !user) return;
 
   console.log("💰 Wallet charging started");
-
+  
   const interval = setInterval(async () => {
     const res = await fetch("/api/wallet/deduct", {
       method: "POST",
@@ -70,6 +70,7 @@ useEffect(() => {
 
   return () => clearInterval(interval);
 }, [callingState, call, user]);
+
   // ▶ Wallet polling
   useEffect(() => {
     const interval = setInterval(async () => {

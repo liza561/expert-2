@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { api } from "@/convex/_generated/api.js";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import streamClient from '@/lib/stream';
 import { createToken } from "@/actions/createToken";

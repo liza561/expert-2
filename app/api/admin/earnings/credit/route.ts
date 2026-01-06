@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { deductWalletAndCreditAdmin } from "@/lib/wallet";
+import { withFileLock } from "@/lib/fileLock";
 
 export const runtime = "nodejs";
 

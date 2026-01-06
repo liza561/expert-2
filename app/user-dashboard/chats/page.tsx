@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { api } from "@/convex/_generated/api.js";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import {
   Card,

@@ -28,8 +28,9 @@ export const upsertUser = mutation({
     name: v.string(),
     email: v.string(),
     imageURL: v.string(),
+    role: v.optional(v.union(v.literal("client"), v.literal("advisor"), v.literal("admin"))),
   },
-  handler: async (ctx, { userId, name, email, imageURL }) => {
+  handler: async (ctx, { userId, name, email, imageURL, role = "client" }) => {
     const existingUser = await ctx.db
       .query("users")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
@@ -40,6 +41,7 @@ export const upsertUser = mutation({
         name,
         email,
         imageURL,
+        role,
         lastSeen: Date.now(),
       });
 
@@ -51,9 +53,43 @@ export const upsertUser = mutation({
       name,
       email,
       imageURL,
+      role,
       isOnline: false,
       lastSeen: Date.now(),
     });
+  },
+});
+
+// Get all advisors
+export const getAllAdvisors = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", "advisor"))
+      .collect();
+  },
+});
+
+// Update user role (admin only)
+export const updateUserRole = mutation({
+  args: {
+    userId: v.string(),
+    newRole: v.union(v.literal("client"), v.literal("advisor"), v.literal("admin")),
+  },
+  handler: async (ctx, { userId, newRole }) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .first();
+
+    if (!user) throw new Error("User not found");
+
+    await ctx.db.patch(user._id, {
+      role: newRole,
+    });
+
+    return { success: true };
   },
 });
 

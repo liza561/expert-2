@@ -1,6 +1,6 @@
 import { useQuery } from "convex/react";
 import  { useState } from "react";
-import { api } from "@/convex/_generated/api";
+import { api } from "@/convex/_generated/api.js";
 import { Doc } from "@/convex/_generated/dataModel";
 import  { useDebounce } from "./useDebounce";
 

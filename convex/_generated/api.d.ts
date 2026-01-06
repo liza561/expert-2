@@ -8,7 +8,14 @@
  * @module
  */
 
+import type * as advisorProfiles from "../advisorProfiles.js";
+import type * as disputes from "../disputes.js";
+import type * as documents from "../documents.js";
+import type * as earnings from "../earnings.js";
+import type * as payouts from "../payouts.js";
+import type * as sessions from "../sessions.js";
 import type * as users from "../users.js";
+import type * as wallet from "../wallet.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +24,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  advisorProfiles: typeof advisorProfiles;
+  disputes: typeof disputes;
+  documents: typeof documents;
+  earnings: typeof earnings;
+  payouts: typeof payouts;
+  sessions: typeof sessions;
   users: typeof users;
+  wallet: typeof wallet;
 }>;
 
 /**
