@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
 
 interface WalletProps {
   userId: string;
@@ -27,7 +28,7 @@ export default function Wallet({ userId }: WalletProps) {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
-
+  const router = useRouter();
   const wallet = useQuery((api as any).wallet.getWallet, { userId }) as any | undefined;
   const transactions = useQuery((api as any).wallet.getTransactionHistory, {
     userId,
@@ -73,6 +74,12 @@ export default function Wallet({ userId }: WalletProps) {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
+        <Button
+        onClick={() => router.back()}
+        className="mb-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg"
+      >
+        ← Back
+      </Button>
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">💳 Wallet</h1>

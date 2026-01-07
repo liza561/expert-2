@@ -1,5 +1,5 @@
-'use client'
-import * as React from "react"
+"use client";
+import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,28 +8,27 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { UserButton, useUser } from "@clerk/nextjs"
-import { ChannelList } from "stream-chat-react"
-import { ChannelFilters, ChannelSort } from "stream-chat"
-import { NewChatDialog } from "@/components/NewChatDialog"
-import { useRouter } from "next/navigation"
-import { usePathname } from "next/navigation"
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { UserButton, useUser } from "@clerk/nextjs";
+import { ChannelList } from "stream-chat-react";
+import { ChannelFilters, ChannelSort } from "stream-chat";
+import { NewChatDialog } from "@/components/NewChatDialog";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-export function UserSidebar(props: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useUser()
-  const router = useRouter()
+export function AdvisorSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useUser();
+  const router = useRouter();
   const pathname = usePathname();
-  const showChannelList = pathname?.startsWith("/user-dashboard/messaging") ?? false;
+  const showChannelList = pathname?.startsWith("/advisor-dashboard/messaging") ?? false;
   const filters: ChannelFilters = {
     members: { $in: [user?.id as string] },
     type: { $in: ["messaging"] },
   }
-
-  const sort: ChannelSort = { last_message_at: -1 }
-  const options = { presence: true, state: true }
-
+  const sort: ChannelSort = { last_message_at: -1 };
+  const options = { presence: true, state: true };
+  
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
@@ -38,7 +37,7 @@ export function UserSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <div className="flex justify-between w-full">
                 <div>
-                  <p className="text-xs text-muted-foreground">Welcome</p>
+                  <p className="text-xs text-muted-foreground">Advisor Panel</p>
                   <p className="font-semibold">
                     {user?.firstName} {user?.lastName}
                   </p>
@@ -58,52 +57,46 @@ export function UserSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 Start New Chat
               </Button>
             </NewChatDialog>
-
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => router.push("/user-dashboard/chats")}
+              onClick={() => router.push("/advisor-dashboard/chats")}
             >
-               Chats
+              Chats
             </Button>
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => router.push("/user-dashboard/messaging")}
+              onClick={() => router.push("/advisor-dashboard/messaging")}
             >
               Messages
             </Button>
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => router.push("/user-dashboard/bookings")}
+              onClick={() => router.push("/advisor-dashboard/sessions")}
             >
-              Your Bookings 
+              Meetings
             </Button>
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => router.push("/user-dashboard/documents")}
+              onClick={() => router.push("/advisor-dashboard/earnings")}
             >
-              Your Documents
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => router.push("/user-dashboard/wallet ")}
-            >
-             Wallet 
+              Earnings
             </Button>
             {showChannelList && (
               <ChannelList
-               filters={filters}
-               sort={sort}
-               options={options}
+                filters={filters}
+                sort={sort}
+                options={options}
               />
             )}
+ 
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   )
 }
+            

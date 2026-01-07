@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Id } from "@/convex/_generated/dataModel";
+import { getSessionById } from "@/convex/sessions";
+import SessionsPage from "../page";
+
 
 export default function SessionDetailPage() {
   const { userId } = useAuth();
@@ -25,12 +28,11 @@ export default function SessionDetailPage() {
   if (!userId) {
     redirect("/sign-in");
   }
-
+  
   // Fetch session details
   const session = useQuery(api.sessions.getSessionById, {
     sessionId: sessionId as Id<"sessions">,
   });
-
   const rateSession = useMutation(api.sessions.rateSession);
   const createDispute = useMutation(api.disputes.createDispute);
 
@@ -45,7 +47,9 @@ export default function SessionDetailPage() {
       await rateSession({
         sessionId: sessionId as Id<"sessions">,
         rating,
-        feedback: feedback || undefined,
+        feedback: feedback || "",
+        clientId: userId!, 
+        advisorId: session!.advisorId, 
       });
 
       setShowRatingForm(false);
@@ -66,10 +70,12 @@ export default function SessionDetailPage() {
 
     try {
       await createDispute({
-        sessionId: sessionId as Id<"sessions">,
-        reason,
-        description: "Client filed dispute for this session",
-      });
+      sessionId: sessionId as Id<"sessions">,
+      clientId: userId!,
+      advisorId: session!.advisorId,
+      reason,
+      description: "Client filed dispute for this session",
+    });
 
       setShowDisputeForm(false);
       alert("Dispute filed successfully. Our team will review it shortly.");
@@ -176,14 +182,6 @@ export default function SessionDetailPage() {
                   </span>
                 </div>
 
-                {session.discountApplied && (
-                  <div className="flex justify-between items-center pb-4 border-b-2 border-green-300 bg-green-50 p-3 rounded-lg">
-                    <span className="font-semibold text-green-700">Discount Applied:</span>
-                    <span className="text-lg font-bold text-green-700">
-                      -${session.discountAmount?.toFixed(2) || "0.00"}
-                    </span>
-                  </div>
-                )}
 
                 <div className="flex justify-between items-center pt-4 border-t-4 border-green-600 bg-green-50 p-4 rounded-lg">
                   <span className="text-lg font-bold text-gray-900">Total Charged:</span>

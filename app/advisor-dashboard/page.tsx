@@ -292,7 +292,7 @@ export default function AdvisorDashboard() {
           {/* Pricing Tab */}
           <TabsContent value="pricing">
             <Card className="p-8 bg-white border-2 border-gray-200 text-center">
-              <p className="text-6xl mb-4">💲</p>
+              <p className="text-6xl mb-4">₹</p>
               <p className="text-2xl font-bold text-gray-900 mb-2">Pricing Management</p>
               <p className="text-gray-600 mb-6">Update your chat and video rates</p>
               <Button

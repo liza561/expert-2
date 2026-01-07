@@ -25,21 +25,21 @@ export default function ChatsPage() {
   if (!users) return <p className="p-6">Loading...</p>;
 
   const openChat = (userId: string) => {
-    router.push(`/user-dashboard/messaging?chatUser=${userId}`);
+    router.push(`/advisor-dashboard/messaging?chatUser=${userId}`);
   };
 
   const startCall = (userId: string) => {
-    router.push(`/user-dashboard/video-call/${userId}`);
+    router.push(`/advisor-dashboard/video-call/${userId}`);
   };
 
   return (
     <div className="p-6 space-y-6">
     <Button
       variant="outline"
-      onClick={() => router.push("/user-dashboard")}
+      onClick={() => router.push("/advisor-dashboard")}
       className="mb-2"
     >
-      ← Back to User Dashboard
+      ← Back to Advisor Dashboard
     </Button>
       <h1 className="text-2xl font-semibold">All Users</h1>
 

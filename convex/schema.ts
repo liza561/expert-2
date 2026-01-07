@@ -49,8 +49,6 @@ export default defineSchema({
   sessions: defineTable({
     clientId: v.string(),
     advisorId: v.string(),
-    clientName: v.string(),
-    advisorName: v.string(),
     durationMinutes: v.optional(v.number()),
     totalCost: v.optional(v.number()),
     type: v.union(v.literal("chat"), v.literal("video")),
@@ -136,13 +134,10 @@ export default defineSchema({
   // Ratings and feedback
   ratings: defineTable({
     sessionId: v.string(),
-    clientName: v.string(),
+    clientName: v.optional(v.string()),
     clientId: v.string(),
     advisorId: v.string(),
-    type: v.union(                     // ✅ ADD
-    v.literal("chat"),
-    v.literal("video")
-  ),
+    type: v.optional(v.union(v.literal("chat"), v.literal("video"))),
     rating: v.number(), // 1-5
     feedback: v.string(),
     createdAt: v.number(),

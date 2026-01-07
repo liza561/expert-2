@@ -9,8 +9,9 @@ export const createDispute = mutation({
     advisorId: v.string(),
     reason: v.string(),
     description: v.string(),
+
   },
-  handler: async (ctx, { sessionId, clientId, advisorId, reason, description }) => {
+  handler: async (ctx, { sessionId, clientId, advisorId, reason, description}) => {
     const disputeId = await ctx.db.insert("disputes", {
       sessionId,
       clientId,

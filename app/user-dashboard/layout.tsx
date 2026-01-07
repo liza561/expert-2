@@ -11,12 +11,12 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link";
 import "stream-chat-react/dist/css/v2/index.css";
-
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
+  const searchParams = useSearchParams();
+  const chatUserId = searchParams.get("chatUser");
   // Pages that should NOT show sidebar
   const noSidebarRoutes = [
     "/chats",
@@ -39,6 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {children}
           </main>
         ) : (
+          
           //  SIDEBAR LAYOUT (default)
           <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
             <AppSidebar />

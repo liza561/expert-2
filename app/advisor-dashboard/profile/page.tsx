@@ -53,7 +53,7 @@ export default function AdvisorProfileSetupPage() {
     userId,
   });
 
-  const updateProfile = useMutation(api.advisorProfiles.upsertAdvisorProfile);
+  const upsertAdvisorProfile = useMutation(api.advisorProfiles.upsertAdvisorProfile);
 
   const handleToggleSpecialization = (spec: string) => {
     setProfileData((prev) => ({
@@ -81,7 +81,7 @@ export default function AdvisorProfileSetupPage() {
     try {
       if (step === 1) {
         // Save bio and specializations
-        await updateProfile({
+        await upsertAdvisorProfile({
           userId,
           bio: profileData.bio,
           specialization: profileData.specializations,
@@ -91,7 +91,7 @@ export default function AdvisorProfileSetupPage() {
         });
       } else if (step === 2) {
         // Save pricing
-        await updateProfile({
+        await upsertAdvisorProfile({
           userId,
           bio: profileData.bio,
           specialization: profileData.specializations,
@@ -101,7 +101,7 @@ export default function AdvisorProfileSetupPage() {
         });
       } else if (step === 3) {
         // Save availability
-        await updateProfile({
+        await upsertAdvisorProfile({
           userId,
           bio: profileData.bio,
           specialization: profileData.specializations,

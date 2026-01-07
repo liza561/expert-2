@@ -3,7 +3,7 @@
 import { serverClient } from "@/lib/streamServer"
 
 export async function createToken(userId: string){
-    const token =serverClient .createToken(userId);
+    const token = serverClient.createToken(userId);
     console.log("Generated token for user:",userId);
     return token;
 }

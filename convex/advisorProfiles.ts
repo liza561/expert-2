@@ -11,18 +11,14 @@ export const getAdvisorProfile = query({
       .first();
   },
 });
-
-// Get all advisor profiles (for client browsing)
 export const getAllAdvisorProfiles = query({
-  args: {},
   handler: async (ctx) => {
+    // Fetch all advisors
     const profiles = await ctx.db.query("advisorProfiles").collect();
-    return profiles.map((profile) => ({
-      ...profile,
-      // Include average rating
-    }));
+    return profiles;
   },
 });
+
 
 // Search advisors by specialization
 export const searchAdvisors = query({

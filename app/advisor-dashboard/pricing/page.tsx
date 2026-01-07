@@ -23,9 +23,11 @@ export default function AdvisorPricingPage() {
     "Wed",
     "Thu",
     "Fri",
+    "Sat",
+    "Sun",
   ]);
-  const [startHour, setStartHour] = useState(9);
-  const [endHour, setEndHour] = useState(17);
+  const [startHour, setStartHour] = useState<number>(9);
+  const [endHour, setEndHour] = useState<number>(17);
 
   if (!userId) {
     redirect("/sign-in");
@@ -35,8 +37,8 @@ export default function AdvisorPricingPage() {
     userId,
   });
 
-  const updatePricing = useMutation(api.advisorProfiles.updatePricing);
-  const updateProfile = useMutation(api.advisorProfiles.updateAdvisorProfile);
+  const updatePricing = useMutation(api.advisorProfiles.updateAdvisorPricing);
+  const updateAvailability = useMutation(api.advisorProfiles.updateAvailability);
 
   const handleToggleDay = (day: string) => {
     setAvailabilityDays((prev) =>
@@ -65,12 +67,14 @@ export default function AdvisorPricingPage() {
   const handleSaveAvailability = async () => {
     setSaveLoading(true);
     try {
-      await updateProfile({
+      await updateAvailability({
         userId,
-        availabilityDays,
-        availabilityStartHour: startHour,
-        availabilityEndHour: endHour,
-      });
+        availabilityHours: {
+        startTime: `${startHour.toString().padStart(2, "0")}:00`,
+        endTime: `${endHour.toString().padStart(2, "0")}:00`,
+        daysOfWeek: availabilityDays,
+      },
+    });
 
       alert("Availability updated successfully!");
     } catch (error) {

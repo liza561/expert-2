@@ -25,7 +25,7 @@ export default function AdvisorProfileSetup({
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const upsertProfile = useMutation((api as any).advisorProfiles.upsertAdvisorProfile);
+  const upsertProfile = useMutation((api as any).advisorProfiles.updateProfile);
 
   const days = [
     "Monday",

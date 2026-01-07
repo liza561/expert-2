@@ -15,13 +15,13 @@ export default function SessionsPage() {
   const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState<"all" | "active" | "completed" | "cancelled">("all");
   const [sortBy, setSortBy] = useState<"date-desc" | "date-asc" | "amount-high" | "amount-low">("date-desc");
-
+  
   if (!userId) {
     redirect("/sign-in");
   }
 
-  const sessions = useQuery(api.sessions.getClientSessions, { userId, limit: 100 });
-
+  const sessions = useQuery(api.sessions.getClientSessions, { clientId: userId });
+  
   // Filter sessions
   const filteredSessions = sessions?.filter((session) => {
     if (selectedStatus === "all") return true;
@@ -184,7 +184,7 @@ export default function SessionsPage() {
                       {session.type === "chat" ? "💬" : "📹"} {session.advisorName}
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
-                      {session.specialization || "Advisor"}
+                      {(session as any)?.specialization ?? "Advisor"}
                     </p>
                     <div className="flex gap-3 text-sm text-gray-700">
                       <span>📅 {new Date(session.createdAt).toLocaleDateString()}</span>

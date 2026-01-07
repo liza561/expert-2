@@ -62,30 +62,42 @@ export default function BrowseAdvisorsPage() {
     return null;
   }
 
-  const handleStartSession = (advisorId: string, sessionType: "chat" | "video") => {
-    if (!wallet) {
-      router.push("/user-dashboard/wallet");
-      return;
-    }
+  const handleStartSession = (
+  userId: string,
+  sessionType: "chat" | "video"
+) => {
+  if (!wallet) {
+    router.push("/user-dashboard/wallet");
+    return;
+  }
 
-    const minBalance =
-      sessionType === "chat"
-        ? advisors?.find((a: any) => a.userId === advisorId)?.chatPricePerMinute! * 3
-        : advisors?.find((a: any) => a.userId === advisorId)?.videoPricePerMinute! * 3;
+  const advisor = advisors?.find((a: any) => a.userId === userId);
+  if (!advisor) return;
 
-    if (wallet.balance < minBalance) {
-      alert(
-        `Minimum balance required: $${minBalance?.toFixed(2)}. Please add funds to your wallet.`
-      );
-      router.push("/user-dashboard/wallet");
-      return;
-    }
+  const pricePerMinute =
+    sessionType === "chat"
+      ? advisor.chatPricePerMinute
+      : advisor.videoPricePerMinute;
 
-    // TODO: Integrate with session creation
+  const minBalance = pricePerMinute * 3;
+
+  if (wallet.balance < minBalance) {
     alert(
-      `Starting ${sessionType} session with advisor ${advisorId}. This will integrate with Stream Chat/Video.`
+      `Minimum balance required: $${minBalance.toFixed(
+        2
+      )}. Please add funds to your wallet.`
     );
-  };
+    router.push("/user-dashboard/wallet");
+    return;
+  }
+
+  // ✅ CORRECT ROUTING
+  if (sessionType === "chat") {
+    router.push(`/user-dashboard/messaging?chatUser=${userId}`);
+  } else {
+    router.push(`/user-dashboard/video-call/${userId}`);
+  }
+};
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">

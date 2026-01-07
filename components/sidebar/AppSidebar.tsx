@@ -1,6 +1,7 @@
 'use client'
 import { useUser } from "@clerk/nextjs"
 import { AdminSidebar } from "./AdminSidebar"
+import { AdvisorSidebar } from "./AdvisorSidebar "
 import { UserSidebar } from "./UserSidebar"
 
 export function AppSidebar(props: any) {
@@ -9,6 +10,10 @@ export function AppSidebar(props: any) {
 
   if (role === "admin") {
     return <AdminSidebar {...props} />
+  }
+
+  if (role === "advisor") {
+    return <AdvisorSidebar {...props} />
   }
 
   return <UserSidebar {...props} />

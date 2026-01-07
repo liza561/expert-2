@@ -8,6 +8,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
+import {
+  Channel,
+  ChannelHeader,
+  MessageInput,
+  MessageList,
+  Thread,
+  Window,
+  useChatContext,
+} from "stream-chat-react";
 
 interface DashboardStats {
   walletBalance: number;
@@ -19,6 +28,7 @@ interface DashboardStats {
 export default function ClientDashboard() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const { channel: activeChannel, setActiveChannel } = useChatContext();
   const [stats, setStats] = useState<DashboardStats>({
     walletBalance: 0,
     upcomingSessions: 0,
@@ -73,7 +83,7 @@ export default function ClientDashboard() {
       {/* Header */}
       <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-4xl font-bold mb-2">Welcome, {user.firstName}! 👋</h1>
+          <h1 className="text-4xl font-bold mb-2">Welcome, {user.firstName}! </h1>
           <p className="text-blue-100">Manage your consultations and wallet</p>
         </div>
       </div>
@@ -85,7 +95,7 @@ export default function ClientDashboard() {
           <Card className="p-6 hover:shadow-lg transition-shadow">
             <div className="text-sm font-semibold text-gray-600 mb-2">💰 Wallet Balance</div>
             <div className="text-3xl font-bold text-green-600 mb-1">
-              ${stats.walletBalance.toFixed(2)}
+              ₹{stats.walletBalance.toFixed(2)}
             </div>
             <p className="text-xs text-gray-500">Available for sessions</p>
             <Button
@@ -129,7 +139,7 @@ export default function ClientDashboard() {
           <Card className="p-6 hover:shadow-lg transition-shadow">
             <div className="text-sm font-semibold text-gray-600 mb-2">💸 Total Spent</div>
             <div className="text-3xl font-bold text-red-600 mb-1">
-              ${stats.totalSpent.toFixed(2)}
+              ₹{stats.totalSpent.toFixed(2)}
             </div>
             <p className="text-xs text-gray-500">All-time spending</p>
           </Card>

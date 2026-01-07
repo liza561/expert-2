@@ -1,7 +1,17 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-// Create or get session
+/* ----------------------------- CONSTANTS ----------------------------- */
+
+const sessionStatus = v.union(
+  v.literal("active"),
+  v.literal("paused"),
+  v.literal("completed"),
+  v.literal("cancelled")
+);
+
+/* --------------------------- CREATE SESSION --------------------------- */
+
 export const createSession = mutation({
   args: {
     clientId: v.string(),
@@ -10,106 +20,128 @@ export const createSession = mutation({
     pricePerMinute: v.number(),
     clientWalletBefore: v.number(),
   },
-  handler: async (
-    ctx,
-    { clientId, advisorId, type, pricePerMinute, clientWalletBefore }
-  ) => {
-    const now = Date.now();
+  handler: async (ctx, args) => {
+    const now: number = Date.now();
 
-    const sessionId = await ctx.db.insert("sessions", {
-      clientId,
-      advisorId,
-      type,
+    return await ctx.db.insert("sessions", {
+      ...args,
       status: "active",
-      pricePerMinute,
       startTime: now,
       totalDurationSeconds: 0,
       totalCharged: 0,
-      clientWalletBefore,
-      clientWalletAfter: clientWalletBefore,
+      clientWalletAfter: args.clientWalletBefore,
       advisorEarning: 0,
       lastActivityTime: now,
       createdAt: now,
+      documents: [] as string[],
     });
-
-    return sessionId;
   },
 });
 
-// Get active session
+/* -------------------------- GET ACTIVE SESSION ------------------------- */
+
 export const getActiveSession = query({
-  args: { clientId: v.string(), advisorId: v.string() },
+  args: {
+    clientId: v.string(),
+    advisorId: v.string(),
+  },
   handler: async (ctx, { clientId, advisorId }) => {
-    const sessions = await ctx.db
+    return await ctx.db
       .query("sessions")
       .withIndex("by_clientId", (q) => q.eq("clientId", clientId))
-      .collect();
-    
-    return sessions.find(
-      (session) =>
-        session.advisorId === advisorId &&
-        (session.status === "active" || session.status === "paused")
-    );
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("advisorId"), advisorId),
+          q.or(
+            q.eq(q.field("status"), "active"),
+            q.eq(q.field("status"), "paused")
+          )
+        )
+      )
+      .first();
   },
 });
 
-// Get session by ID
+/* ----------------------------- GET SESSION ---------------------------- */
+
 export const getSession = query({
   args: { sessionId: v.id("sessions") },
+  handler: async (ctx, { sessionId }) => ctx.db.get(sessionId),
+});
+
+// Add this to your sessions.ts
+export const getSessionById = query({
+  args: { sessionId: v.id("sessions") },
   handler: async (ctx, { sessionId }) => {
-    return await ctx.db.get(sessionId);
+    const session = await ctx.db.get(sessionId);
+    if (!session) return null;
+
+    // Get Advisor name from the users table
+    const advisor = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", session.advisorId))
+      .first();
+
+    return {
+      ...session,
+      advisorName: advisor?.name || "Advisor",
+    };
   },
 });
 
-// Get all sessions for user (client/advisor)
+
+
+/* ---------------------------- USER SESSIONS --------------------------- */
+
 export const getSessions = query({
-  args: { userId: v.string(), limit: v.optional(v.number()) },
+  args: {
+    userId: v.string(),
+    limit: v.optional(v.number()),
+  },
   handler: async (ctx, { userId, limit = 50 }) => {
-    const allSessions = await ctx.db
-      .query("sessions")
-      .collect();
-
-    const filtered = allSessions.filter(
-      (s) => (s.clientId === userId || s.advisorId === userId)
-    );
-
-    return filtered.slice(0, limit);
+    const sessions = await ctx.db.query("sessions").collect();
+    return sessions
+      .filter((s) => s.clientId === userId || s.advisorId === userId)
+      .slice(0, limit);
   },
 });
 
-// Get advisor sessions
+/* --------------------------- ADVISOR SESSIONS -------------------------- */
+
 export const getAdvisorSessions = query({
-  args: { advisorId: v.string(), status: v.optional(v.string()) },
+  args: {
+    advisorId: v.string(),
+    status: v.optional(sessionStatus),
+  },
   handler: async (ctx, { advisorId, status }) => {
     const sessions = await ctx.db
       .query("sessions")
       .withIndex("by_advisorId", (q) => q.eq("advisorId", advisorId))
       .collect();
 
-    if (status) {
-      return sessions.filter((s) => s.status === status);
-    }
-    return sessions;
+    return status ? sessions.filter((s) => s.status === status) : sessions;
   },
 });
 
-// Get client sessions
+/* ---------------------------- CLIENT SESSIONS -------------------------- */
+
 export const getClientSessions = query({
-  args: { clientId: v.string(), status: v.optional(v.string()) },
+  args: {
+    clientId: v.string(),
+    status: v.optional(sessionStatus),
+  },
   handler: async (ctx, { clientId, status }) => {
     const sessions = await ctx.db
       .query("sessions")
       .withIndex("by_clientId", (q) => q.eq("clientId", clientId))
       .collect();
 
-    if (status) {
-      return sessions.filter((s) => s.status === status);
-    }
-    return sessions;
+    return status ? sessions.filter((s) => s.status === status) : sessions;
   },
 });
 
-// Update session - for per-minute billing
+/* ----------------------- UPDATE BILLING (PER MIN) ---------------------- */
+
 export const updateSessionBilling = mutation({
   args: {
     sessionId: v.id("sessions"),
@@ -118,18 +150,12 @@ export const updateSessionBilling = mutation({
     clientWalletAfter: v.number(),
     advisorEarning: v.number(),
   },
-  handler: async (
-    ctx,
-    { sessionId, durationSeconds, amountCharged, clientWalletAfter, advisorEarning }
-  ) => {
-    const session = await ctx.db.get(sessionId);
-    if (!session) throw new Error("Session not found");
-
-    await ctx.db.patch(sessionId, {
-      totalDurationSeconds: durationSeconds,
-      totalCharged: amountCharged,
-      clientWalletAfter,
-      advisorEarning,
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.sessionId, {
+      totalDurationSeconds: args.durationSeconds,
+      totalCharged: args.amountCharged,
+      clientWalletAfter: args.clientWalletAfter,
+      advisorEarning: args.advisorEarning,
       lastActivityTime: Date.now(),
     });
 
@@ -137,33 +163,29 @@ export const updateSessionBilling = mutation({
   },
 });
 
-// Pause session
+/* ----------------------------- PAUSE SESSION --------------------------- */
+
 export const pauseSession = mutation({
   args: { sessionId: v.id("sessions") },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.db.get(sessionId);
-    if (!session) throw new Error("Session not found");
-
+    const now: number = Date.now();
     await ctx.db.patch(sessionId, {
       status: "paused",
-      pausedAt: Date.now(),
-      lastActivityTime: Date.now(),
+      pausedAt: now,
+      lastActivityTime: now,
     });
 
     return { success: true };
   },
 });
 
-// Resume session
+/* ---------------------------- RESUME SESSION --------------------------- */
+
 export const resumeSession = mutation({
   args: { sessionId: v.id("sessions") },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.db.get(sessionId);
-    if (!session) throw new Error("Session not found");
-
     await ctx.db.patch(sessionId, {
       status: "active",
-      pausedAt: undefined,
       lastActivityTime: Date.now(),
     });
 
@@ -171,7 +193,8 @@ export const resumeSession = mutation({
   },
 });
 
-// End session
+/* ----------------------------- END SESSION ----------------------------- */
+
 export const endSession = mutation({
   args: {
     sessionId: v.id("sessions"),
@@ -180,59 +203,58 @@ export const endSession = mutation({
     clientWalletAfter: v.number(),
     advisorEarning: v.number(),
   },
-  handler: async (
-    ctx,
-    { sessionId, finalDurationSeconds, totalCharged, clientWalletAfter, advisorEarning }
-  ) => {
-    const session = await ctx.db.get(sessionId);
+  handler: async (ctx, args) => {
+    const session = await ctx.db.get(args.sessionId);
     if (!session) throw new Error("Session not found");
 
-    const now = Date.now();
+    const now: number = Date.now();
 
-    await ctx.db.patch(sessionId, {
+    await ctx.db.patch(args.sessionId, {
       status: "completed",
       endTime: now,
-      totalDurationSeconds: finalDurationSeconds,
-      totalCharged,
-      clientWalletAfter,
-      advisorEarning,
+      totalDurationSeconds: args.finalDurationSeconds,
+      totalCharged: args.totalCharged,
+      clientWalletAfter: args.clientWalletAfter,
+      advisorEarning: args.advisorEarning,
       lastActivityTime: now,
     });
 
-    // Create advisor earning record
     await ctx.db.insert("earnings", {
       advisorId: session.advisorId,
-      sessionId,
-      amount: advisorEarning,
-      durationSeconds: finalDurationSeconds,
+      sessionId: args.sessionId,
+      amount: args.advisorEarning,
+      durationSeconds: args.finalDurationSeconds,
       clientId: session.clientId,
       type: session.type,
       status: "completed",
       createdAt: now,
     });
 
-    return { success: true, session };
+    return { success: true };
   },
 });
 
-// Cancel session
-export const cancelSession = mutation({
-  args: { sessionId: v.id("sessions"), reason: v.optional(v.string()) },
-  handler: async (ctx, { sessionId, reason }) => {
-    const session = await ctx.db.get(sessionId);
-    if (!session) throw new Error("Session not found");
+/* ---------------------------- CANCEL SESSION --------------------------- */
 
+export const cancelSession = mutation({
+  args: {
+    sessionId: v.id("sessions"),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const now: number = Date.now();
     await ctx.db.patch(sessionId, {
       status: "cancelled",
-      endTime: Date.now(),
-      lastActivityTime: Date.now(),
+      endTime: now,
+      lastActivityTime: now,
     });
 
     return { success: true };
   },
 });
 
-// Add document to session
+/* ------------------------- ADD DOCUMENT TO SESSION --------------------- */
+
 export const addDocumentToSession = mutation({
   args: {
     sessionId: v.id("sessions"),
@@ -242,60 +264,58 @@ export const addDocumentToSession = mutation({
     const session = await ctx.db.get(sessionId);
     if (!session) throw new Error("Session not found");
 
-    const documents = session.documents || [];
-    documents.push(documentId);
-
-    await ctx.db.patch(sessionId, { documents });
+    await ctx.db.patch(sessionId, {
+      documents: [...(session.documents ?? []), documentId],
+    });
 
     return { success: true };
   },
 });
 
-// Rate session
+/* ------------------------------ RATE SESSION --------------------------- */
+
 export const rateSession = mutation({
   args: {
     sessionId: v.id("sessions"),
-    rating: v.number(),
-    feedback: v.string(),
     clientId: v.string(),
     advisorId: v.string(),
+    rating: v.number(),
+    feedback: v.string(),
   },
-  handler: async (ctx, { sessionId, rating, feedback, clientId, advisorId }) => {
-    if (rating < 1 || rating > 5) {
+  handler: async (ctx, args) => {
+    if (args.rating < 1 || args.rating > 5)
       throw new Error("Rating must be between 1 and 5");
-    }
 
-    const session = await ctx.db.get(sessionId);
-    if (!session) throw new Error("Session not found");
-
-    // Update session with rating
-    await ctx.db.patch(sessionId, {
-      rating,
-      feedback,
+    await ctx.db.patch(args.sessionId, {
+      rating: args.rating,
+      feedback: args.feedback,
     });
 
-    // Create rating record
-    const ratingId = await ctx.db.insert("ratings", {
-      sessionId,
-      clientId,
-      advisorId,
-      rating,
-      feedback,
-      createdAt: Date.now(),
+    const now: number = Date.now();
+
+    await ctx.db.insert("ratings", {
+      sessionId: args.sessionId,
+      clientId: args.clientId,
+      advisorId: args.advisorId,
+      rating: args.rating,
+      feedback: args.feedback,
+      createdAt: now,
     });
 
-    // Update advisor profile average rating
+    // Update advisor profile rating
     const ratings = await ctx.db
       .query("ratings")
-      .withIndex("by_advisorId", (q) => q.eq("advisorId", advisorId))
+      .withIndex("by_advisorId", (q) => q.eq("advisorId", args.advisorId))
       .collect();
 
-    const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
-    const averageRating = totalRating / ratings.length;
+    const averageRating =
+      ratings.length === 0
+        ? 0
+        : ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
 
     const profile = await ctx.db
       .query("advisorProfiles")
-      .withIndex("by_userId", (q) => q.eq("userId", advisorId))
+      .withIndex("by_userId", (q) => q.eq("userId", args.advisorId))
       .first();
 
     if (profile) {
@@ -305,11 +325,12 @@ export const rateSession = mutation({
       });
     }
 
-    return { success: true, ratingId };
+    return { success: true };
   },
 });
 
-// Log balance warning
+/* --------------------------- BALANCE WARNINGS -------------------------- */
+
 export const logBalanceWarning = mutation({
   args: {
     sessionId: v.id("sessions"),
@@ -321,15 +342,14 @@ export const logBalanceWarning = mutation({
     ),
     remainingBalance: v.number(),
   },
-  handler: async (ctx, { sessionId, userId, warningType, remainingBalance }) => {
+  handler: async (ctx, args) => {
     await ctx.db.insert("balanceWarnings", {
-      sessionId,
-      userId,
-      warningType,
-      remainingBalance,
+      ...args,
       createdAt: Date.now(),
     });
 
     return { success: true };
   },
 });
+
+
