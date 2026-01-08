@@ -11,7 +11,7 @@ function Header() {
     const isUserDashboard = pathname.startsWith("/user-dashboard");
     const isAdminDashboard = pathname.startsWith("/admin-dashboard");
     const { user } = useUser();
-    const userRole = user?.publicMetadata?.role;
+    const ROLES = user?.publicMetadata?.role;
     return (
         <header className="flex items-center justify-between px-4 h-15 sm:px-6">
             <Link href="/" className="font-medium uppercase tracking-widest">
@@ -20,7 +20,7 @@ function Header() {
             <div className="flex items-center gap-2">
                 <Authenticated>
                     {!isUserDashboard && !isAdminDashboard && (
-                        <Link href={userRole === "admin" ? "/admin-dashboard" : "/user-dashboard"}>
+                        <Link href={ROLES === "admin" ? "/admin-dashboard" : "/user-dashboard"}>
                             <Button variant="outline">Dashboard</Button>
                         </Link>
                     )}

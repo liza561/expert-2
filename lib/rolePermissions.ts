@@ -1,34 +1,34 @@
 // Role and permission checks
-export type UserRole = "client" | "advisor" | "admin";
+export type ROLES = "user" | "advisor" | "admin";
 
-export function canAccessAdminPanel(role: UserRole): boolean {
+export function canAccessAdminPanel(role: ROLES): boolean {
   return role === "admin";
 }
 
-export function canSetPricing(role: UserRole): boolean {
+export function canSetPricing(role: ROLES): boolean {
   return role === "advisor";
 }
 
-export function canStartSession(role: UserRole): boolean {
-  return role === "client";
+export function canStartSession(role: ROLES): boolean {
+  return role === "user";
 }
 
-export function canReceiveEarnings(role: UserRole): boolean {
+export function canReceiveEarnings(role: ROLES): boolean {
   return role === "advisor";
 }
 
-export function getDefaultRole(): UserRole {
-  return "client";
+export function getDefaultRole(): ROLES {
+  return "user";
 }
 
-export function isAdvisor(role: UserRole): boolean {
+export function isAdvisor(role: ROLES): boolean {
   return role === "advisor";
 }
 
-export function isClient(role: UserRole): boolean {
-  return role === "client";
+export function isUser(role: ROLES): boolean {
+  return role === "user";
 }
 
-export function isAdmin(role: UserRole): boolean {
+export function isAdmin(role: ROLES): boolean {
   return role === "admin";
 }

@@ -170,6 +170,7 @@ export default function UserDashboard() {
           </div>
         </div>
 
+
         {/* Help & Support */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-6 bg-linear-to-br from-blue-50 to-blue-100">

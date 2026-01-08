@@ -34,7 +34,11 @@ export default function AdminDashboardInner() {
   }
 
   const role = user?.publicMetadata?.role;
-  if (role !== "admin") return <UserDashboard />;
+     if (role === "user") {
+    router.push("/advisor-dashboard");
+    return null;
+    }
+
 
   // ✅ open or create chat
   const openOrCreateChatWithUser = async (otherUserId: string) => {

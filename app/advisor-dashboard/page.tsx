@@ -15,22 +15,17 @@ export default function AdvisorDashboard() {
   const router = useRouter();
 
   // Additional safety check
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!userId || !user) {
-      router.replace("/sign-in");
-      return;
-    }
+    if (!isLoaded) {
+    return <div className="p-6 text-center">Loading...</div>;
+  }
 
     // Check if user has advisor role
-    const userRole = user.publicMetadata?.role as string | undefined;
-    if (userRole !== "advisor") {
-      // Redirect non-advisors to user dashboard
-      router.push("/user-dashboard");
-      return;
+    const role = user?.publicMetadata?.role;
+     if (role === "user") {
+    router.push("/admin-dashboard");
+    return null;
     }
-  }, [userId, user, isLoaded, router]);
+
 
   // Fetch advisor data
   const wallet = useQuery((api as any).wallet.getWallet, { userId: userId || "" }) as any | undefined;
