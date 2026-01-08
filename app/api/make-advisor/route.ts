@@ -7,9 +7,8 @@ export async function POST(req: Request) {
     if (!userId) {
       return new Response("Missing userId", { status: 400 });
     }
-
+     const client = await clerkClient();
     // Update the Clerk user's publicMetadata
-    const client = await clerkClient();
     await client.users.updateUser(userId, {
       publicMetadata: {
         role: "advisor",

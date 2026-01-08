@@ -20,7 +20,7 @@ export default function SessionsPage() {
     redirect("/sign-in");
   }
 
-  const sessions = useQuery(api.sessions.getClientSessions, { clientId: userId });
+  const sessions = useQuery(api.sessions.getUserSessions, { userId: userId });
   
   // Filter sessions
   const filteredSessions = sessions?.filter((session) => {
@@ -115,7 +115,7 @@ export default function SessionsPage() {
 
           <Card className="p-6 bg-linear-to-br from-purple-50 to-purple-100 border-2 border-purple-200">
             <p className="text-sm font-semibold text-gray-600 uppercase mb-2">Total Spent</p>
-            <p className="text-3xl font-bold text-purple-600">${stats.totalSpent.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-purple-600">₹{stats.totalSpent.toFixed(2)}</p>
           </Card>
         </div>
 
@@ -181,7 +181,7 @@ export default function SessionsPage() {
                   {/* Session Info */}
                   <div className="md:col-span-5">
                     <p className="text-lg font-bold text-gray-900 mb-1">
-                      {session.type === "chat" ? "💬" : "📹"} {session.advisorName}
+                      {session.type === "chat" ? "💬" : "📹"} {session.advisorId}
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
                       {(session as any)?.specialization ?? "Advisor"}

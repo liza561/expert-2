@@ -37,5 +37,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
 git add .
-git commit -m "fixed middleware and dashboard routing"
+git commit -m ""
 git push

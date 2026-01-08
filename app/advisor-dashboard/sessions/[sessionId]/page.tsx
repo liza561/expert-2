@@ -60,7 +60,7 @@ export default function AdvisorSessionDetailPage() {
               <div className="space-y-4">
                 <div className="border-b-2 border-blue-200 pb-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase mb-1">Client</p>
-                  <p className="text-2xl font-bold text-gray-900">{session.clientId || "Client"}</p>
+                  <p className="text-2xl font-bold text-gray-900">{session.userId || "Client"}</p>
                 </div>
 
                 <div className="border-b-2 border-blue-200 pb-4">

@@ -5,16 +5,16 @@ import { v } from "convex/values";
 export const createDispute = mutation({
   args: {
     sessionId: v.string(),
-    clientId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
     reason: v.string(),
     description: v.string(),
 
   },
-  handler: async (ctx, { sessionId, clientId, advisorId, reason, description}) => {
+  handler: async (ctx, { sessionId, userId, advisorId, reason, description}) => {
     const disputeId = await ctx.db.insert("disputes", {
       sessionId,
-      clientId,
+      userId,
       advisorId,
       reason,
       description,
@@ -80,7 +80,7 @@ export const updateDisputeStatus = mutation({
     if (refundAmount && refundAmount > 0) {
       const wallet = await ctx.db
         .query("wallets")
-        .withIndex("by_userId", (q) => q.eq("userId", dispute.clientId))
+        .withIndex("by_userId", (q) => q.eq("userId", dispute.userId))
         .first();
 
       if (wallet) {
@@ -92,7 +92,7 @@ export const updateDisputeStatus = mutation({
 
         // Create transaction record
         await ctx.db.insert("transactions", {
-          userId: dispute.clientId,
+          userId: dispute.userId,
           type: "refund",
           amount: refundAmount,
           balance: newBalance,
@@ -113,7 +113,7 @@ export const getUserDisputes = query({
     const allDisputes = await ctx.db.query("disputes").collect();
 
     return allDisputes.filter(
-      (d) => d.clientId === userId || d.advisorId === userId
+      (d) => d.userId === userId || d.advisorId === userId
     );
   },
 });

@@ -25,7 +25,7 @@ interface DashboardStats {
   totalSpent: number;
 }
 
-export default function ClientDashboard() {
+export default function UserDashboard() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const { channel: activeChannel, setActiveChannel } = useChatContext();
@@ -38,13 +38,13 @@ export default function ClientDashboard() {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   // Fetch user data
-  const userProfile = useQuery(api.users.getUserByClerkUserId, {
+  const userProfile = useQuery(api.users.getUserByUserId, {
     userId: user?.id || "",
   });
 
   const wallet = useQuery(api.wallet.getWallet, { userId: user?.id || "" });
-  const sessions = useQuery(api.sessions.getClientSessions, {
-    clientId: user?.id || "",
+  const sessions = useQuery(api.sessions.getUserSessions, {
+    userId: user?.id || "",
   });
   const upcomingSessions = sessions?.filter((s) => s.status === "pending" || s.status === "active") || [];
   const completedSessions = sessions?.filter((s) => s.status === "completed") || [];
@@ -169,123 +169,6 @@ export default function ClientDashboard() {
             </Button>
           </div>
         </div>
-
-        {/* Tabs */}
-        <Tabs defaultValue="recent" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="recent">Recent Activity</TabsTrigger>
-            <TabsTrigger value="upcoming">Upcoming Sessions</TabsTrigger>
-          </TabsList>
-
-          {/* Recent Activity */}
-          <TabsContent value="recent">
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Recent Sessions</h3>
-
-              {completedSessions && completedSessions.length > 0 ? (
-                <div className="space-y-3">
-                  {completedSessions.slice(0, 5).map((session) => (
-                    <div
-                      key={session._id}
-                      className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                      onClick={() =>
-                        router.push(`/user-dashboard/sessions/${session._id}`)
-                      }
-                    >
-                      <div>
-                        <p className="font-semibold">
-                          {session.type === "chat" ? "💬" : "📹"} {session.type.toUpperCase()} Session
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {new Date(session.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-lg">
-                          -${session.totalCharged.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {Math.round(session.totalDurationSeconds / 60)} min
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-600">
-                  <p>No completed sessions yet</p>
-                  <Button
-                    onClick={() => router.push("/user-dashboard/advisors")}
-                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Find an Advisor
-                  </Button>
-                </div>
-              )}
-            </Card>
-          </TabsContent>
-
-          {/* Upcoming Sessions */}
-          <TabsContent value="upcoming">
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Your Sessions</h3>
-
-              {upcomingSessions && upcomingSessions.length > 0 ? (
-                <div className="space-y-3">
-                  {upcomingSessions.map((session) => (
-                    <div
-                      key={session._id}
-                      className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold text-lg">
-                            {session.type === "chat" ? "💬" : "📹"} {session.type.toUpperCase()} Session
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Rate: ${session.pricePerMinute}/min
-                          </p>
-                          <span
-                            className={`inline-block mt-2 px-2 py-1 rounded text-xs font-semibold ${
-                              session.status === "active"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {session.status.toUpperCase()}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <Button
-                            onClick={() =>
-                              session.status === "active"
-                                ? router.push(
-                                    `/user-dashboard/${session.type === "chat" ? "chats" : "video-call"}/${session._id}`
-                                  )
-                                : null
-                            }
-                            className={`${
-                              session.status === "active"
-                                ? "bg-green-600 hover:bg-green-700"
-                                : "bg-gray-400 cursor-not-allowed"
-                            } text-white`}
-                            disabled={session.status !== "active"}
-                          >
-                            {session.status === "active" ? "Resume" : "Pending"}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-600">
-                  <p>No active sessions</p>
-                </div>
-              )}
-            </Card>
-          </TabsContent>
-        </Tabs>
 
         {/* Help & Support */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">

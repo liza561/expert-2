@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId, durationSeconds, totalCharged, clientWalletAfter, advisorEarning } =
+    const { sessionId, durationSeconds, totalCharged, userWalletAfter, advisorEarning } =
       await req.json();
 
     // TODO: Call Convex to end session
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       summary: {
         durationSeconds,
         totalCharged,
-        clientWalletAfter,
+        userWalletAfter,
         advisorEarning,
       },
     });

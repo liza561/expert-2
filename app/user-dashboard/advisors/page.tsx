@@ -58,7 +58,7 @@ export default function BrowseAdvisorsPage() {
   }
 
   if (!user) {
-    router.push("/sign-in");
+    router.replace("/sign-in");
     return null;
   }
 
@@ -79,11 +79,11 @@ export default function BrowseAdvisorsPage() {
       ? advisor.chatPricePerMinute
       : advisor.videoPricePerMinute;
 
-  const minBalance = pricePerMinute * 3;
+  const minBalance = pricePerMinute * 1;
 
   if (wallet.balance < minBalance) {
     alert(
-      `Minimum balance required: $${minBalance.toFixed(
+      `Minimum balance required: ₹${minBalance.toFixed(
         2
       )}. Please add funds to your wallet.`
     );
@@ -149,7 +149,7 @@ export default function BrowseAdvisorsPage() {
               </label>
               <div className="bg-green-50 border-2 border-green-500 rounded-lg p-3 text-center">
                 <p className="text-2xl font-bold text-green-600">
-                  ${wallet?.balance.toFixed(2) || "0.00"}
+                  ₹{wallet?.balance.toFixed(2) || "0.00"}
                 </p>
               </div>
             </div>
@@ -238,13 +238,13 @@ export default function BrowseAdvisorsPage() {
                       <div>
                         <p className="text-xs text-gray-600">💬 Chat</p>
                         <p className="text-lg font-bold text-blue-600">
-                          ${advisor.chatPricePerMinute}/min
+                          ₹{advisor.chatPricePerMinute}/min
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">📹 Video</p>
                         <p className="text-lg font-bold text-green-600">
-                          ${advisor.videoPricePerMinute}/min
+                          ₹{advisor.videoPricePerMinute}/min
                         </p>
                       </div>
                     </div>

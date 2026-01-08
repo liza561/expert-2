@@ -8,7 +8,7 @@ import { api } from "@/convex/_generated/api.js";
 
 interface SessionDisputeProps {
   sessionId: string;
-  clientId: string;
+  userId: string;
   advisorId: string;
   onSubmit?: () => void;
 }
@@ -24,7 +24,7 @@ const DISPUTE_REASONS = [
 
 export default function SessionDispute({
   sessionId,
-  clientId,
+  userId,
   advisorId,
   onSubmit,
 }: SessionDisputeProps) {
@@ -46,7 +46,7 @@ export default function SessionDispute({
     try {
       await createDispute({
         sessionId,
-        clientId,
+        userId,
         advisorId,
         reason,
         description,

@@ -1,24 +1,36 @@
 import { ConvexClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
-const client = new ConvexClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const client = new ConvexClient(
+  process.env.NEXT_PUBLIC_CONVEX_URL!
+);
 
-// Session billing management
+
+// --------------------
+// Start billing session
+// --------------------
 export async function startBillingSession(
   sessionId: string,
-  clientId: string,
+  userId: string,
   pricePerMinute: number
 ) {
-  return await client.mutation("sessions:startSession", {
+  return client.mutation(api.sessions.createSession, {
     sessionId,
-    clientId,
+    userId,
     pricePerMinute,
+    userWalletBefore: 0,
+    advisorId: "advisorId",
+    type: "chat",
   });
 }
 
-// Deduct funds every second
+// --------------------
+// Billing tick
+// --------------------
 export async function processBillingTick(
   sessionId: string,
-  clientId: string,
+  userId: string,
   pricePerMinute: number
 ): Promise<{
   success: boolean;
@@ -28,31 +40,27 @@ export async function processBillingTick(
 }> {
   const costPerSecond = pricePerMinute / 60;
 
-  // Get current wallet
-  const wallet = await client.query("wallet:getWallet", { userId: clientId });
+  const wallet = await client.query(api.wallet.getWallet, { userId });
 
-  if (!wallet) {
-    return { success: false };
-  }
+  if (!wallet) return { success: false };
 
-  // Check for low balance warnings
   const minutesRemaining = wallet.balance / pricePerMinute;
 
   if (minutesRemaining <= 1 && minutesRemaining > 0.5) {
-    // 1-minute warning
-    await client.mutation("sessions:logBalanceWarning", {
+    await client.mutation(api.sessions.logBalanceWarning, {
       sessionId,
-      userId: clientId,
+      userId,
       warningType: "1-minute",
       remainingBalance: wallet.balance,
     });
 
     return { success: true, newBalance: wallet.balance, warning: "1-minute" };
-  } else if (minutesRemaining <= 2 && minutesRemaining > 1) {
-    // 2-minute warning
-    await client.mutation("sessions:logBalanceWarning", {
+  }
+
+  if (minutesRemaining <= 2 && minutesRemaining > 1) {
+    await client.mutation(api.sessions.logBalanceWarning, {
       sessionId,
-      userId: clientId,
+      userId,
       warningType: "2-minute",
       remainingBalance: wallet.balance,
     });
@@ -60,61 +68,50 @@ export async function processBillingTick(
     return { success: true, newBalance: wallet.balance, warning: "2-minute" };
   }
 
-  // Deduct funds
   if (wallet.balance >= costPerSecond) {
-    const result = await client.mutation("wallet:deductFunds", {
-      userId: clientId,
+    const result = await client.mutation(api.wallet.deductFunds, {
+      userId,
       amount: costPerSecond,
       sessionId,
       description: `Session billing - ${pricePerMinute}/min`,
     });
 
-    if (result.success) {
-      return {
-        success: true,
-        newBalance: result.newBalance,
-      };
+    if (result?.success) {
+      return { success: true, newBalance: result.newBalance };
     }
   }
 
-  // Zero balance
-  if (wallet.balance < costPerSecond) {
-    await client.mutation("sessions:logBalanceWarning", {
-      sessionId,
-      userId: clientId,
-      warningType: "zero-balance",
-      remainingBalance: wallet.balance,
-    });
+  await client.mutation(api.sessions.logBalanceWarning, {
+    sessionId,
+    userId,
+    warningType: "zero-balance",
+    remainingBalance: wallet.balance,
+  });
 
-    return {
-      success: false,
-      shouldPause: true,
-      warning: "zero-balance",
-    };
-  }
-
-  return { success: false };
+  return { success: false, shouldPause: true, warning: "zero-balance" };
 }
 
-// End session and calculate totals
+// --------------------
+// End billing session
+// --------------------
 export async function endBillingSession(
-  sessionId: string,
+  sessionId: Id<"sessions">,
   durationSeconds: number,
   pricePerMinute: number,
-  clientWalletBefore: number
+  userWalletBefore: number
 ) {
   const totalCharged = (durationSeconds / 60) * pricePerMinute;
-  const advisorEarning = totalCharged * 0.9; // 10% platform fee
+  const advisorEarning = totalCharged * 0.9;
 
-  // Get current wallet balance
-  const session = await client.query("sessions:getSession", { sessionId });
-
+  const session = await client.query(api.sessions.getSession, {
+    sessionId,
+});
   return {
     durationSeconds,
     totalCharged,
     advisorEarning,
-    clientWalletBefore,
-    clientWalletAfter: session?.clientWalletAfter || 0,
+    userWalletBefore,
+    userWalletAfter: session?.userWalletAfter ?? 0,
   };
 }
 

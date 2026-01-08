@@ -19,7 +19,7 @@ export default function AdvisorDashboard() {
     if (!isLoaded) return;
 
     if (!userId || !user) {
-      router.push("/sign-in");
+      router.replace("/sign-in");
       return;
     }
 
@@ -89,7 +89,7 @@ export default function AdvisorDashboard() {
                 <p className="font-bold text-yellow-900 mb-2">⚠️ Complete Your Profile</p>
                 <p className="text-yellow-800 mb-3">
                   Your profile is {stats.profileCompletion}% complete. Completing your profile increases visibility to
-                  potential clients!
+                  potential users!
                 </p>
                 <div className="w-full bg-yellow-200 rounded-full h-3 overflow-hidden">
                   <div
@@ -255,7 +255,7 @@ export default function AdvisorDashboard() {
                     >
                       <div>
                         <p className="font-semibold text-gray-900">
-                          {session.type === "chat" ? "💬" : "📹"} Session with {session.clientName}
+                          {session.type === "chat" ? "💬" : "📹"} Session with {session.userName}
                         </p>
                         <p className="text-sm text-gray-600">
                           {new Date(session.createdAt).toLocaleDateString()}

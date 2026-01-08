@@ -24,7 +24,7 @@ export default function AdvisorSessionsPage() {
 
   useEffect(() => {
   if (!userId) {
-    router.push("/sign-in");
+    router.replace("/sign-in");
   }
 }, [userId, router]);
 
@@ -115,7 +115,7 @@ if (!userId) return null;
             ← Back
           </Button>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">📅 Session Management</h1>
-          <p className="text-gray-600">View all your sessions with clients</p>
+          <p className="text-gray-600">View all your sessions with users</p>
         </div>
 
         {/* Stats Grid */}
@@ -216,7 +216,7 @@ if (!userId) return null;
                       {session.type === "chat" ? "💬" : "📹"} Session
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
-                      Client ID: {session.clientId.slice(0, 12)}...
+                      User ID: {session.userId.slice(0, 12)}...
                     </p>
                     <div className="flex gap-3 text-sm text-gray-700">
                       <span>📅 {new Date(session.createdAt).toLocaleDateString()}</span>
@@ -288,7 +288,7 @@ if (!userId) return null;
             <p className="text-2xl font-bold text-gray-900 mb-2">No Sessions Yet</p>
             <p className="text-gray-600 mb-6">
               {selectedStatus === "all"
-                ? "You haven't had any sessions yet. Clients will book sessions once they discover your profile!"
+                ? "You haven't had any sessions yet. Users will book sessions once they discover your profile!"
                 : `You have no ${selectedStatus} sessions.`}
             </p>
             <Button

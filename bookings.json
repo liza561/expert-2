@@ -232,7 +232,7 @@
     "status": "upcoming",
     "channelCid": "cid_1767084964000",
     "videoCallUrl": "/call/cid_1767084964000",
-    "rating": 4
+    "rating": 5
   },
   {
     "id": "1767084994309",
@@ -245,7 +245,7 @@
     "status": "upcoming",
     "channelCid": "cid_1767084994309",
     "videoCallUrl": "/call/cid_1767084994309",
-    "rating": 5
+    "rating": 3
   },
   {
     "id": "1767096996981",
@@ -269,7 +269,8 @@
     "time": "20:00",
     "status": "upcoming",
     "channelCid": "cid_1767097142792",
-    "videoCallUrl": "/call/cid_1767097142792"
+    "videoCallUrl": "/call/cid_1767097142792",
+    "rating": 5
   },
   {
     "id": "1767102167587",
@@ -330,5 +331,29 @@
     "status": "upcoming",
     "channelCid": "cid_1767167007149",
     "videoCallUrl": "/call/cid_1767167007149"
+  },
+  {
+    "id": "1767872210692",
+    "userId": "user_36Yf0eKnLOK0gjGhBXi72s2MVVh",
+    "userName": "User joy",
+    "adminId": "user_36bnu0iD5sLNti741ZydgbUvZF0",
+    "adminName": "Admin Katuri (lizakaturi@gmail.com)",
+    "date": "2026-01-09",
+    "time": "19:08",
+    "status": "upcoming",
+    "channelCid": "cid_1767872210692",
+    "videoCallUrl": "/call/cid_1767872210692"
+  },
+  {
+    "id": "1767873629484",
+    "userId": "user_36Yf0eKnLOK0gjGhBXi72s2MVVh",
+    "userName": "User joy",
+    "adminId": "user_36bnu0iD5sLNti741ZydgbUvZF0",
+    "adminName": "Admin Katuri (lizakaturi@gmail.com)",
+    "date": "2026-01-08",
+    "time": "19:30",
+    "status": "upcoming",
+    "channelCid": "cid_1767873629484",
+    "videoCallUrl": "/call/cid_1767873629484"
   }
 ]

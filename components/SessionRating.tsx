@@ -8,14 +8,14 @@ import { api } from "@/convex/_generated/api.js";
 
 interface SessionRatingProps {
   sessionId: string;
-  clientId: string;
+  userId: string;
   advisorId: string;
   onComplete?: () => void;
 }
 
 export default function SessionRating({
   sessionId,
-  clientId,
+  userId,
   advisorId,
   onComplete,
 }: SessionRatingProps) {
@@ -39,7 +39,7 @@ export default function SessionRating({
         sessionId,
         rating,
         feedback,
-        clientId,
+        userId,
         advisorId,
       });
 

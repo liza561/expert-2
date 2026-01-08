@@ -79,12 +79,8 @@ export default function BookingsPage() {
     return new Date(`${date}T${time}`).getTime() < Date.now();
   };
 
-  const startCall = (adminId: string) => {
-    router.push(`/user-dashboard/video-call/${adminId}`);
-  };
-
-  const openChat = (adminId: string) => {
-    router.push(`/user-dashboard?chatAdmin=${adminId}`);
+  const openChat = (userId: string) => {
+    router.push(`/user-dashboard/messaging?chatUser=${userId}`);
   };
 
   /* ---------------- fetch data ---------------- */

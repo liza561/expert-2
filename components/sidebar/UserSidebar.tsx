@@ -83,6 +83,13 @@ export function UserSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <Button
               variant="outline"
               className="w-full"
+              onClick={() => router.push("/user-dashboard/sessions")}
+            >
+              Your Sessions 
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
               onClick={() => router.push("/user-dashboard/documents")}
             >
               Your Documents

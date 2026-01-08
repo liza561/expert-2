@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 
 interface BillingSession {
   sessionId: string;
-  clientId: string;
+  userId: string;
   advisorId: string;
   pricePerMinute: number;
   startTime: number;
@@ -54,7 +54,7 @@ class PerMinuteBillingService {
     try {
       // Get wallet balance
       const walletResponse = await fetch(
-        `/api/wallet?userId=${session.clientId}`
+        `/api/wallet?userId=${session.userId}`
       );
       const { balance } = await walletResponse.json();
 
@@ -76,7 +76,7 @@ class PerMinuteBillingService {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: session.clientId,
+          userId: session.userId,
           amount: costPerSecond,
           sessionId: session.sessionId,
           description: "Per-minute session billing",
@@ -127,7 +127,7 @@ export const billingService = new PerMinuteBillingService();
 
 export function useBillingSession(
   sessionId: string,
-  clientId: string,
+  userId: string,
   advisorId: string,
   pricePerMinute: number,
   onBalanceWarning?: (type: "2-minute" | "1-minute" | "zero-balance") => void,
@@ -143,7 +143,7 @@ export function useBillingSession(
   useEffect(() => {
     sessionRef.current = {
       sessionId,
-      clientId,
+      userId,
       advisorId,
       pricePerMinute,
       startTime: Date.now(),
@@ -159,7 +159,7 @@ export function useBillingSession(
         billingService.stop(sessionRef.current.sessionId);
       }
     };
-  }, [sessionId, clientId, advisorId, pricePerMinute, onBalanceWarning, onSessionPaused, onUpdate]);
+  }, [sessionId, userId, advisorId, pricePerMinute, onBalanceWarning, onSessionPaused, onUpdate]);
 
   const pause = useCallback(() => {
     if (sessionRef.current) {

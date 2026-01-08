@@ -6,15 +6,15 @@ export interface SessionSummary {
   totalCharged: number;
   advisorEarning: number;
   platformFee: number;
-  clientWalletBefore: number;
-  clientWalletAfter: number;
+  userWalletBefore: number;
+  userWalletAfter: number;
 }
 
 export function calculateSessionSummary(
   durationSeconds: number,
   pricePerMinute: number,
-  clientWalletBefore: number,
-  clientWalletAfter: number
+  userWalletBefore: number,
+  userWalletAfter: number
 ): SessionSummary {
   const durationMinutes = durationSeconds / 60;
   const totalCharged = durationMinutes * pricePerMinute;
@@ -27,8 +27,8 @@ export function calculateSessionSummary(
     totalCharged,
     advisorEarning,
     platformFee,
-    clientWalletBefore,
-    clientWalletAfter,
+    userWalletBefore,
+    userWalletAfter,
   };
 }
 

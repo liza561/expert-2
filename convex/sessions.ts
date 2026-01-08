@@ -14,11 +14,12 @@ const sessionStatus = v.union(
 
 export const createSession = mutation({
   args: {
-    clientId: v.string(),
+    sessionId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
     type: v.union(v.literal("chat"), v.literal("video")),
     pricePerMinute: v.number(),
-    clientWalletBefore: v.number(),
+    userWalletBefore: v.number(),
   },
   handler: async (ctx, args) => {
     const now: number = Date.now();
@@ -29,7 +30,7 @@ export const createSession = mutation({
       startTime: now,
       totalDurationSeconds: 0,
       totalCharged: 0,
-      clientWalletAfter: args.clientWalletBefore,
+      userWalletAfter: args.userWalletBefore,
       advisorEarning: 0,
       lastActivityTime: now,
       createdAt: now,
@@ -42,13 +43,13 @@ export const createSession = mutation({
 
 export const getActiveSession = query({
   args: {
-    clientId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
   },
-  handler: async (ctx, { clientId, advisorId }) => {
+  handler: async (ctx, { userId, advisorId }) => {
     return await ctx.db
       .query("sessions")
-      .withIndex("by_clientId", (q) => q.eq("clientId", clientId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .filter((q) =>
         q.and(
           q.eq(q.field("advisorId"), advisorId),
@@ -101,7 +102,7 @@ export const getSessions = query({
   handler: async (ctx, { userId, limit = 50 }) => {
     const sessions = await ctx.db.query("sessions").collect();
     return sessions
-      .filter((s) => s.clientId === userId || s.advisorId === userId)
+      .filter((s) => s.userId === userId || s.advisorId === userId)
       .slice(0, limit);
   },
 });
@@ -125,15 +126,15 @@ export const getAdvisorSessions = query({
 
 /* ---------------------------- CLIENT SESSIONS -------------------------- */
 
-export const getClientSessions = query({
+export const getUserSessions = query({
   args: {
-    clientId: v.string(),
+    userId: v.string(),
     status: v.optional(sessionStatus),
   },
-  handler: async (ctx, { clientId, status }) => {
+  handler: async (ctx, { userId, status }) => {
     const sessions = await ctx.db
       .query("sessions")
-      .withIndex("by_clientId", (q) => q.eq("clientId", clientId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .collect();
 
     return status ? sessions.filter((s) => s.status === status) : sessions;
@@ -147,14 +148,14 @@ export const updateSessionBilling = mutation({
     sessionId: v.id("sessions"),
     durationSeconds: v.number(),
     amountCharged: v.number(),
-    clientWalletAfter: v.number(),
+    userWalletAfter: v.number(),
     advisorEarning: v.number(),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.sessionId, {
       totalDurationSeconds: args.durationSeconds,
       totalCharged: args.amountCharged,
-      clientWalletAfter: args.clientWalletAfter,
+      userWalletAfter: args.userWalletAfter,
       advisorEarning: args.advisorEarning,
       lastActivityTime: Date.now(),
     });
@@ -200,7 +201,7 @@ export const endSession = mutation({
     sessionId: v.id("sessions"),
     finalDurationSeconds: v.number(),
     totalCharged: v.number(),
-    clientWalletAfter: v.number(),
+    userWalletAfter: v.number(),
     advisorEarning: v.number(),
   },
   handler: async (ctx, args) => {
@@ -214,7 +215,7 @@ export const endSession = mutation({
       endTime: now,
       totalDurationSeconds: args.finalDurationSeconds,
       totalCharged: args.totalCharged,
-      clientWalletAfter: args.clientWalletAfter,
+      userWalletAfter: args.userWalletAfter,
       advisorEarning: args.advisorEarning,
       lastActivityTime: now,
     });
@@ -224,7 +225,7 @@ export const endSession = mutation({
       sessionId: args.sessionId,
       amount: args.advisorEarning,
       durationSeconds: args.finalDurationSeconds,
-      clientId: session.clientId,
+      userId: session.userId,
       type: session.type,
       status: "completed",
       createdAt: now,
@@ -277,7 +278,7 @@ export const addDocumentToSession = mutation({
 export const rateSession = mutation({
   args: {
     sessionId: v.id("sessions"),
-    clientId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
     rating: v.number(),
     feedback: v.string(),
@@ -295,7 +296,7 @@ export const rateSession = mutation({
 
     await ctx.db.insert("ratings", {
       sessionId: args.sessionId,
-      clientId: args.clientId,
+      userId: args.userId,
       advisorId: args.advisorId,
       rating: args.rating,
       feedback: args.feedback,
@@ -333,7 +334,7 @@ export const rateSession = mutation({
 
 export const logBalanceWarning = mutation({
   args: {
-    sessionId: v.id("sessions"),
+    sessionId: v.string(),
     userId: v.string(),
     warningType: v.union(
       v.literal("2-minute"),

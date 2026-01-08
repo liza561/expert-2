@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId, clientId, advisorId, type, pricePerMinute } =
+    const { sessionId, userId, advisorId, type, pricePerMinute } =
       await req.json();
 
     // TODO: Call Convex to create session

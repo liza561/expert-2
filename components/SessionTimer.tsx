@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 interface SessionTimerProps {
   sessionId: string;
   pricePerMinute: number;
-  clientId: string;
+  userId: string;
   advisorId: string;
   onSessionEnd?: (summary: SessionSummary) => void;
 }
@@ -15,14 +15,14 @@ interface SessionTimerProps {
 interface SessionSummary {
   durationSeconds: number;
   totalCharged: number;
-  clientWalletAfter: number;
+  userWalletAfter: number;
   advisorEarning: number;
 }
 
 export default function SessionTimer({
   sessionId,
   pricePerMinute,
-  clientId,
+  userId,
   advisorId,
   onSessionEnd,
 }: SessionTimerProps) {
@@ -54,7 +54,7 @@ export default function SessionTimer({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
-          clientId,
+          userId,
           pricePerMinute,
         }),
       });
@@ -160,7 +160,7 @@ export default function SessionTimer({
               onSessionEnd?.({
                 durationSeconds: seconds,
                 totalCharged,
-                clientWalletAfter: balance,
+                userWalletAfter: balance,
                 advisorEarning: totalCharged * 0.9,
               });
             }}

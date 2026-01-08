@@ -48,7 +48,7 @@ export default function SessionDetailPage() {
         sessionId: sessionId as Id<"sessions">,
         rating,
         feedback: feedback || "",
-        clientId: userId!, 
+        userId: userId!, 
         advisorId: session!.advisorId, 
       });
 
@@ -71,7 +71,7 @@ export default function SessionDetailPage() {
     try {
       await createDispute({
       sessionId: sessionId as Id<"sessions">,
-      clientId: userId!,
+      userId: userId!,
       advisorId: session!.advisorId,
       reason,
       description: "Client filed dispute for this session",

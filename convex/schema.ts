@@ -7,7 +7,7 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     imageURL: v.string(),
-    role: v.optional(v.union(v.literal("client"), v.literal("advisor"), v.literal("admin"))),
+    role: v.optional(v.union(v.literal("user"), v.literal("advisor"), v.literal("admin"))),
     isOnline: v.optional(v.boolean()),
     lastSeen: v.optional(v.number()),
   })
@@ -47,7 +47,7 @@ export default defineSchema({
 
   // Session records - tracks all chat/video sessions
   sessions: defineTable({
-    clientId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
     durationMinutes: v.optional(v.number()),
     totalCost: v.optional(v.number()),
@@ -65,8 +65,8 @@ export default defineSchema({
     pausedAt: v.optional(v.number()),
     totalDurationSeconds: v.number(),
     totalCharged: v.number(),
-    clientWalletBefore: v.number(),
-    clientWalletAfter: v.number(),
+    userWalletBefore: v.number(),
+    userWalletAfter: v.number(),
     advisorEarning: v.number(),
     documents: v.optional(v.array(v.string())), // document IDs
     rating: v.optional(v.number()),
@@ -75,7 +75,7 @@ export default defineSchema({
     lastActivityTime: v.number(),
     createdAt: v.number(),
   })
-    .index("by_clientId", ["clientId"])
+    .index("by_userId", ["userId"])
     .index("by_advisorId", ["advisorId"])
     .index("by_status", ["status"]),
 
@@ -104,7 +104,7 @@ export default defineSchema({
     sessionId: v.string(),
     amount: v.number(),
     durationSeconds: v.number(),
-    clientId: v.string(),
+    userId: v.string(),
     type: v.union(v.literal("chat"), v.literal("video")),
     status: v.union(
       v.literal("pending"),
@@ -134,8 +134,8 @@ export default defineSchema({
   // Ratings and feedback
   ratings: defineTable({
     sessionId: v.string(),
-    clientName: v.optional(v.string()),
-    clientId: v.string(),
+    userName: v.optional(v.string()),
+    userId: v.string(),
     advisorId: v.string(),
     type: v.optional(v.union(v.literal("chat"), v.literal("video"))),
     rating: v.number(), // 1-5
@@ -189,7 +189,7 @@ export default defineSchema({
   // Disputes
   disputes: defineTable({
     sessionId: v.string(),
-    clientId: v.string(),
+    userId: v.string(),
     advisorId: v.string(),
     reason: v.string(),
     description: v.string(),
