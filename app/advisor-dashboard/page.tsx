@@ -22,8 +22,8 @@ export default function AdvisorDashboard() {
     // Check if user has advisor role
     const role = user?.publicMetadata?.role;
      if (role === "user") {
-    router.push("/admin-dashboard");
-    return null;
+      router.push("/advisor-dashboard");
+      return null;
     }
 
 

@@ -73,10 +73,11 @@ export default function UserDashboard() {
     );
   }
 
-  if (!user) {
-    router.push("/sign-in");
-    return null;
-  }
+  const role = user?.publicMetadata?.role;
+     if (role !== "user") {
+      router.push("/advisor-dashboard");
+      return null;
+    }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
