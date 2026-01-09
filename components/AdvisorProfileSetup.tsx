@@ -87,7 +87,7 @@ export default function AdvisorProfileSetup({
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              placeholder="Tell clients about yourself and your expertise"
+              placeholder="Tell users about yourself and your expertise"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={4}
               required

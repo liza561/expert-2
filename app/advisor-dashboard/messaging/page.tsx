@@ -38,7 +38,7 @@ export default function AdvisorDashboardInner() {
   }
 
   const role = user?.publicMetadata?.role;
-  if (role !== "advisor") return <UserDashboard />;
+    if (role !== "advisor" && role !== "admin") return <UserDashboard />;
 
   // ✅ open or create chat
   const openOrCreateChatWithUser = async (otherUserId: string) => {

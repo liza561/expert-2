@@ -78,13 +78,12 @@ export default function UserDashboard() {
       router.push("/advisor-dashboard");
       return null;
     }
-
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-4xl font-bold mb-2">Welcome, {user.firstName}! </h1>
+          <h1 className="text-4xl font-bold mb-2">Welcome, {user?.firstName}! </h1>
           <p className="text-blue-100">Manage your consultations and wallet</p>
         </div>
       </div>

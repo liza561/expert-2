@@ -67,7 +67,7 @@ export default function AdvisorReviewsPage() {
             ← Back
           </Button>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">⭐ Reviews & Feedback</h1>
-          <p className="text-gray-600">See what your clients think about your sessions</p>
+          <p className="text-gray-600">See what your users think about your sessions</p>
         </div>
 
         {/* Rating Summary Card */}
@@ -156,7 +156,7 @@ export default function AdvisorReviewsPage() {
                   <div>
                     <p className="text-sm font-semibold text-gray-600 uppercase mb-2">Session</p>
                     <p className="font-semibold text-gray-900 mb-1">
-                      {review.type === "chat" ? "💬 Chat" : "📹 Video"} with {review.clientName}
+                      {review.type === "chat" ? "💬 Chat" : "📹 Video"} with {review.userId}
                     </p>
                     <p className="text-sm text-gray-600">
                       Duration: {review.durationMinutes} minutes
@@ -187,7 +187,7 @@ export default function AdvisorReviewsPage() {
             <p className="text-4xl mb-4">⭐</p>
             <p className="text-2xl font-bold text-gray-900 mb-2">No Reviews Yet</p>
             <p className="text-gray-600 mb-6">
-              Reviews will appear here as clients complete sessions and leave ratings. Keep providing excellent service!
+              Reviews will appear here as users complete sessions and leave ratings. Keep providing excellent service!
             </p>
             <Button
               onClick={() => router.push("/advisor-dashboard")}

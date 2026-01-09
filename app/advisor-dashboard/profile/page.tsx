@@ -159,7 +159,7 @@ export default function AdvisorProfileSetupPage() {
                 Bio & Professional Summary *
               </label>
               <Textarea
-                placeholder="Tell clients about yourself, your experience, and your approach..."
+                placeholder="Tell users about yourself, your experience, and your approach..."
                 value={profileData.bio}
                 onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
                 className="w-full p-4 border-2 border-gray-300 rounded-lg min-h-32 text-gray-800"
@@ -235,7 +235,7 @@ export default function AdvisorProfileSetupPage() {
                 <span className="text-2xl font-bold text-gray-700">/min</span>
               </div>
               <p className="text-xs text-gray-600 mt-2">
-                For a 30-minute chat, clients will pay: ₹{(profileData.chatPricePerMinute * 30).toFixed(2)}
+                For a 30-minute chat, users will pay: ₹{(profileData.chatPricePerMinute * 30).toFixed(2)}
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export default function AdvisorProfileSetupPage() {
                 <span className="text-2xl font-bold text-gray-700">/min</span>
               </div>
               <p className="text-xs text-gray-600 mt-2">
-                For a 30-minute call, clients will pay: ₹{(profileData.videoPricePerMinute * 30).toFixed(2)}
+                For a 30-minute call, users will pay: ₹{(profileData.videoPricePerMinute * 30).toFixed(2)}
               </p>
             </div>
 

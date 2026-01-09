@@ -19,8 +19,14 @@ export default function AdvisorEarningsPage() {
     redirect("/sign-in");
   }
 
-  const earnings = useQuery(api.earnings.getEarningsSummary, { advisorId: userId });
-  const sessions = useQuery(api.sessions.getAdvisorSessions, { advisorId: userId });
+  const earnings = useQuery(
+  api.earnings.getEarningsSummary,
+  userId ? { advisorId: userId } : "skip"
+);
+  const sessions = useQuery(
+  api.sessions.getAdvisorSessions,
+  userId ? { advisorId: userId } : "skip"
+);
 
   // Calculate period-specific earnings
   const now = new Date();
@@ -37,7 +43,7 @@ export default function AdvisorEarningsPage() {
   }
 
   const periodSessions = sessions?.filter(
-    (s) => new Date(s.createdAt) >= periodStart && s.status === "completed"
+    (s) => new Date(Number(s.createdAt)) >= periodStart && s.status === "completed"
   ) || [];
 
   const periodEarnings = periodSessions.reduce((sum, s) => sum + (s.totalCost || 0), 0);
@@ -136,7 +142,7 @@ export default function AdvisorEarningsPage() {
                     >
                       <div className="flex-1">
                         <p className="font-semibold text-gray-900">
-                          {session.type === "chat" ? "💬" : "📹"} Session with {session.clientName}
+                          {session.type === "chat" ? "💬" : "📹"} Session with {session.userName}
                         </p>
                         <p className="text-sm text-gray-600 mt-1">
                           📅 {new Date(session.createdAt).toLocaleDateString("en-US", {
@@ -218,25 +224,26 @@ export default function AdvisorEarningsPage() {
                 })()}
               </Card>
 
-              {/* Top Clients */}
+              {/* Top Users */}
               <Card className="p-6 bg-white border-2 border-gray-200">
-                <h3 className="font-bold text-lg text-gray-900 mb-6">Top Clients</h3>
+                <h3 className="font-bold text-lg text-gray-900 mb-6">Top Users</h3>
 
                 {(() => {
-                  const clientMap = new Map<string, number>();
+                  const userMap = new Map<string, number>();
                   periodSessions.forEach((s) => {
-                    const current = clientMap.get(s.clientName) || 0;
-                    clientMap.set(s.clientName, current + (s.totalCost || 0));
+                    const name = s.userName ?? "Unknown User";
+                    const current = userMap.get(name) || 0;
+                    userMap.set(name, current + (s.totalCharged || 0));
                   });
 
-                  const topClients = Array.from(clientMap.entries())
+                  const topUsers = Array.from(userMap.entries())
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
 
                   return (
                     <div className="space-y-3">
-                      {topClients.length > 0 ? (
-                        topClients.map(([name, amount], index) => (
+                      {topUsers.length > 0 ? (
+                        topUsers.map(([name, amount], index) => (
                           <div key={name} className="flex items-center gap-3">
                             <span className="font-bold text-lg text-gray-500">#{index + 1}</span>
                             <div className="flex-1">
@@ -246,7 +253,7 @@ export default function AdvisorEarningsPage() {
                           </div>
                         ))
                       ) : (
-                        <p className="text-gray-600">No client data available</p>
+                        <p className="text-gray-600">No user data available</p>
                       )}
                     </div>
                   );

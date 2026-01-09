@@ -93,6 +93,7 @@ export const upsertUser = mutation({
 
     return  ctx.db.insert("users", {
       userId : args.userId,
+      userName: args.name,
       name: args.name,
       email: args.email,
       imageURL: args.imageURL,

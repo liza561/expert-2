@@ -34,8 +34,8 @@ export default function AdminDashboardInner() {
   }
 
   const role = user?.publicMetadata?.role;
-     if (role !== "user" && role !== "admin") {
-    router.push("/advisor-dashboard");
+     if (role !== "user" && role !== "advisor") {
+    router.push("/admin-dashboard");
     return null;
     }
 

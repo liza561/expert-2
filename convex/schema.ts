@@ -4,6 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   users: defineTable({
     userId: v.string(),
+    userName: v.optional(v.string()),
     name: v.string(),
     email: v.string(),
     imageURL: v.string(),
@@ -35,7 +36,7 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"]),
 
-  // Wallet - stores balance for clients and advisors
+  // Wallet - stores balance for users and advisors
   wallets: defineTable({
     userId: v.string(),
     balance: v.number(),
@@ -48,6 +49,7 @@ export default defineSchema({
   // Session records - tracks all chat/video sessions
   sessions: defineTable({
     userId: v.string(),
+    userName: v.optional(v.string()),
     advisorId: v.string(),
     durationMinutes: v.optional(v.number()),
     totalCost: v.optional(v.number()),
@@ -105,6 +107,7 @@ export default defineSchema({
     amount: v.number(),
     durationSeconds: v.number(),
     userId: v.string(),
+    userName: v.optional(v.string()),
     type: v.union(v.literal("chat"), v.literal("video")),
     status: v.union(
       v.literal("pending"),

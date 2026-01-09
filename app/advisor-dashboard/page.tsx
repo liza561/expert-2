@@ -21,10 +21,9 @@ export default function AdvisorDashboard() {
 
     // Check if user has advisor role
     const role = user?.publicMetadata?.role;
-     if (role === "user") {
-      router.push("/advisor-dashboard");
-      return null;
-    }
+     if (role !== "advisor" && role !== "admin") {
+      return <AdvisorDashboard />;
+}
 
 
   // Fetch advisor data
@@ -210,9 +209,9 @@ export default function AdvisorDashboard() {
                 </p>
               </Card>
 
-              {/* Client Satisfaction */}
+              {/* User Satisfaction */}
               <Card className="p-6 bg-linear-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300">
-                <h3 className="font-bold text-lg text-gray-900 mb-4">😊 Client Satisfaction</h3>
+                <h3 className="font-bold text-lg text-gray-900 mb-4">😊 User Satisfaction</h3>
                 <div className="mb-3">
                   <div className="text-3xl mb-2">
                     {"⭐".repeat(Math.floor(stats.avgRating))}

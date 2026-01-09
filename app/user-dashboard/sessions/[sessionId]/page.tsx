@@ -74,7 +74,7 @@ export default function SessionDetailPage() {
       userId: userId!,
       advisorId: session!.advisorId,
       reason,
-      description: "Client filed dispute for this session",
+      description: "User filed dispute for this session",
     });
 
       setShowDisputeForm(false);

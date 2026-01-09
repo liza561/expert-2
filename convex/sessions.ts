@@ -16,6 +16,7 @@ export const createSession = mutation({
   args: {
     sessionId: v.string(),
     userId: v.string(),
+    userName: v.string(),
     advisorId: v.string(),
     type: v.union(v.literal("chat"), v.literal("video")),
     pricePerMinute: v.number(),
@@ -226,6 +227,7 @@ export const endSession = mutation({
       amount: args.advisorEarning,
       durationSeconds: args.finalDurationSeconds,
       userId: session.userId,
+      userName: session.userName,
       type: session.type,
       status: "completed",
       createdAt: now,
